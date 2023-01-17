@@ -152,6 +152,9 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
+  lifecycle {
+    ignore_changes = [schema]
+  }
   
   dynamic "schema" {
     for_each = var.number_schemas == null ? [] : var.number_schemas
