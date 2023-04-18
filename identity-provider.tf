@@ -8,4 +8,10 @@ resource "aws_cognito_identity_provider" "identity_provider" {
   attribute_mapping = lookup(element(var.identity_providers, count.index), "attribute_mapping", {})
   idp_identifiers   = lookup(element(var.identity_providers, count.index), "idp_identifiers", [])
   provider_details  = lookup(element(var.identity_providers, count.index), "provider_details", {})
+
+  lifecycle {
+    ignore_changes = [
+      provider_details
+    ]
+  }
 }
