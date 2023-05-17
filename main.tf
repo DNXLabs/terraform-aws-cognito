@@ -98,7 +98,7 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-  
+
   dynamic "software_token_mfa_configuration" {
     for_each = local.software_token_mfa_configuration
     content {
@@ -141,7 +141,7 @@ resource "aws_cognito_user_pool" "pool" {
       name                     = lookup(schema.value, "name")
       required                 = lookup(schema.value, "required")
 
-      
+
       dynamic "string_attribute_constraints" {
         for_each = length(lookup(schema.value, "string_attribute_constraints")) == 0 ? [] : [lookup(schema.value, "string_attribute_constraints", {})]
         content {
@@ -152,7 +152,7 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-  
+
   dynamic "schema" {
     for_each = var.number_schemas == null ? [] : var.number_schemas
     content {
@@ -162,7 +162,7 @@ resource "aws_cognito_user_pool" "pool" {
       name                     = lookup(schema.value, "name")
       required                 = lookup(schema.value, "required")
 
-      
+
       dynamic "number_attribute_constraints" {
         for_each = length(lookup(schema.value, "number_attribute_constraints")) == 0 ? [] : [lookup(schema.value, "number_attribute_constraints", {})]
         content {
@@ -173,7 +173,7 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-  
+
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
@@ -181,7 +181,7 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-  
+
   dynamic "verification_message_template" {
     for_each = local.verification_message_template
     content {
@@ -191,11 +191,11 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-  
+
   dynamic "account_recovery_setting" {
     for_each = length(var.recovery_mechanisms) == 0 ? [] : [1]
     content {
-      
+
       dynamic "recovery_mechanism" {
         for_each = var.recovery_mechanisms
         content {
@@ -211,13 +211,13 @@ resource "aws_cognito_user_pool" "pool" {
 }
 
 locals {
-  
+
   username_configuration_default = length(var.username_configuration) == 0 ? {} : {
     case_sensitive = lookup(var.username_configuration, "case_sensitive", true)
   }
   username_configuration = length(local.username_configuration_default) == 0 ? [] : [local.username_configuration_default]
 
-  
+
   admin_create_user_config_default = {
     allow_admin_create_user_only = lookup(var.admin_create_user_config, "allow_admin_create_user_only", null) == null ? var.admin_create_user_config_allow_admin_create_user_only : lookup(var.admin_create_user_config, "allow_admin_create_user_only")
     email_message                = lookup(var.admin_create_user_config, "email_message", null) == null ? (var.email_verification_message == "" || var.email_verification_message == null ? var.admin_create_user_config_email_message : var.email_verification_message) : lookup(var.admin_create_user_config, "email_message")
@@ -228,21 +228,21 @@ locals {
 
   admin_create_user_config = [local.admin_create_user_config_default]
 
-   sms_configuration_default = {
+  sms_configuration_default = {
     external_id    = lookup(var.sms_configuration, "external_id", null) == null ? var.sms_configuration_external_id : lookup(var.sms_configuration, "external_id")
     sns_caller_arn = lookup(var.sms_configuration, "sns_caller_arn", null) == null ? var.sms_configuration_sns_caller_arn : lookup(var.sms_configuration, "sns_caller_arn")
   }
 
   sms_configuration = lookup(local.sms_configuration_default, "external_id") == "" || lookup(local.sms_configuration_default, "sns_caller_arn") == "" ? [] : [local.sms_configuration_default]
 
-   device_configuration_default = {
+  device_configuration_default = {
     challenge_required_on_new_device      = lookup(var.device_configuration, "challenge_required_on_new_device", null) == null ? var.device_configuration_challenge_required_on_new_device : lookup(var.device_configuration, "challenge_required_on_new_device")
     device_only_remembered_on_user_prompt = lookup(var.device_configuration, "device_only_remembered_on_user_prompt", null) == null ? var.device_configuration_device_only_remembered_on_user_prompt : lookup(var.device_configuration, "device_only_remembered_on_user_prompt")
   }
 
   device_configuration = lookup(local.device_configuration_default, "challenge_required_on_new_device") == false && lookup(local.device_configuration_default, "device_only_remembered_on_user_prompt") == false ? [] : [local.device_configuration_default]
 
-  
+
   email_configuration_default = {
     configuration_set      = lookup(var.email_configuration, "configuration_set", null) == null ? var.email_configuration_configuration_set : lookup(var.email_configuration, "configuration_set")
     reply_to_email_address = lookup(var.email_configuration, "reply_to_email_address", null) == null ? var.email_configuration_reply_to_email_address : lookup(var.email_configuration, "reply_to_email_address")
@@ -253,7 +253,7 @@ locals {
 
   email_configuration = [local.email_configuration_default]
 
-    password_policy_is_null = {
+  password_policy_is_null = {
     minimum_length                   = var.password_policy_minimum_length
     require_lowercase                = var.password_policy_require_lowercase
     require_numbers                  = var.password_policy_require_numbers
@@ -281,7 +281,7 @@ locals {
 
   user_pool_add_ons = var.user_pool_add_ons_advanced_security_mode == null && length(var.user_pool_add_ons) == 0 ? [] : [local.user_pool_add_ons_default]
 
-   verification_message_template_default = {
+  verification_message_template_default = {
     default_email_option  = lookup(var.verification_message_template, "default_email_option", null) == null ? var.verification_message_template_default_email_option : lookup(var.verification_message_template, "default_email_option")
     email_message_by_link = lookup(var.verification_message_template, "email_message_by_link", null) == null ? var.verification_message_template_email_message_by_link : lookup(var.verification_message_template, "email_message_by_link")
     email_subject_by_link = lookup(var.verification_message_template, "email_subject_by_link", null) == null ? var.verification_message_template_email_subject_by_link : lookup(var.verification_message_template, "email_subject_by_link")
@@ -289,7 +289,7 @@ locals {
 
   verification_message_template = [local.verification_message_template_default]
 
-   software_token_mfa_configuration_default = {
+  software_token_mfa_configuration_default = {
     enabled = lookup(var.software_token_mfa_configuration, "enabled", null) == null ? var.software_token_mfa_configuration_enabled : lookup(var.software_token_mfa_configuration, "enabled")
   }
 
