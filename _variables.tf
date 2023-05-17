@@ -138,7 +138,7 @@ variable "mfa_configuration" {
   default     = "OFF"
   validation {
     condition     = contains(["OFF", "ON", "OPTIONAL"], var.mfa_configuration)
-    error_message = "The value must be one of 'OFF', 'ON', 'OPTIONAL'"
+    error_message = "The value must be one of 'OFF', 'ON', 'OPTIONAL'."
   }
 }
 
