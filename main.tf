@@ -1,9 +1,9 @@
 resource "aws_cognito_user_pool" "pool" {
   count = var.enabled ? 1 : 0
 
-  alias_attributes         = var.alias_attributes
-  auto_verified_attributes = var.auto_verified_attributes
-  name                     = var.user_pool_name
+  alias_attributes           = var.alias_attributes
+  auto_verified_attributes   = var.auto_verified_attributes
+  name                       = var.user_pool_name
   mfa_configuration          = var.mfa_configuration
   sms_authentication_message = var.sms_authentication_message
   username_attributes        = var.username_attributes
