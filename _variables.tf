@@ -173,13 +173,12 @@ variable "lambda_config" {
 
 variable "lambda_config_create_auth_challenge" {
   description = "The ARN of the lambda creating an authentication challenge."
-
+  type = optional(string)
 }
 
 variable "lambda_config_custom_message" {
   description = "A custom Message AWS Lambda trigger."
-  type        = string
-
+  type = optional(string)
 }
 
 variable "lambda_config_define_auth_challenge" {
@@ -190,8 +189,7 @@ variable "lambda_config_define_auth_challenge" {
 
 variable "lambda_config_post_authentication" {
   description = "A post-authentication AWS Lambda trigger"
-  type        = string
-
+  type = optional(string)
 }
 
 variable "lambda_config_post_confirmation" {
@@ -202,48 +200,43 @@ variable "lambda_config_post_confirmation" {
 
 variable "lambda_config_pre_authentication" {
   description = "A pre-authentication AWS Lambda trigger"
-  type        = string
-
+  type = optional(string)
 }
+
 variable "lambda_config_pre_sign_up" {
   description = "A pre-registration AWS Lambda trigger"
-  type        = string
-
+  type = optional(string)
 }
 
 variable "lambda_config_pre_token_generation" {
   description = "Allow to customize identity token claims before token generation"
-  type        = string
-
+  type = optional(string)
 }
 
 variable "lambda_config_user_migration" {
   description = "The user migration Lambda config type"
-  type        = string
-
+  type = optional(string)
 }
 
 variable "lambda_config_verify_auth_challenge_response" {
   description = "Verifies the authentication challenge response"
-  type        = string
-
+  type = optional(string)
 }
 
 variable "lambda_config_kms_key_id" {
   description = "The Amazon Resource Name of Key Management Service Customer master keys. Amazon Cognito uses the key to encrypt codes and temporary passwords sent to CustomEmailSender and CustomSMSSender."
-  type        = string
-
+  type = optional(string)
 }
 
 variable "lambda_config_custom_email_sender" {
   description = "A custom email sender AWS Lambda trigger."
-  type        = any
+  type        = optional(any)
   default     = {}
 }
 
 variable "lambda_config_custom_sms_sender" {
   description = "A custom SMS sender AWS Lambda trigger."
-  type        = any
+  type        = optional(any)
   default     = {}
 }
 
