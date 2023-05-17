@@ -13,7 +13,7 @@ module "aws_cognito_user_pool_complete_example" {
   # }
 
   sms_configuration = {
-    external_id = ""
+    external_id    = ""
     sns_caller_arn = ""
   }
 

@@ -10,7 +10,6 @@ variable "user_pool_name" {
   type        = string
 }
 
-# username_configuration
 variable "username_configuration" {
   description = "The Username Configuration. Seting `case_sesiteve` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs"
   type = object({
