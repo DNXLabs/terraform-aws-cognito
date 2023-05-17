@@ -88,8 +88,8 @@ resource "aws_cognito_user_pool" "pool" {
   }
 
   sms_configuration {
-    external_id    = var.sms_configuration.external_id
-    sns_caller_arn = var.sms_configuration.sns_caller_arn
+    external_id    = try(var.sms_configuration.external_id, null)
+    sns_caller_arn = try(var.sms_configuration.sns_caller_arn, null)
     # sns_region     = var.sms_configuration.sns_region
   }
 
