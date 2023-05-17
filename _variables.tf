@@ -38,12 +38,6 @@ variable "admin_create_user_config_allow_admin_create_user_only" {
   default     = true
 }
 
-variable "temporary_password_validity_days" {
-  description = "The user account expiration limit, in days, after which the account is no longer usable"
-  type        = number
-  default     = 7
-}
-
 variable "admin_create_user_config_email_message" {
   description = "The message template for email messages. Must contain `{username}` and `{####}` placeholders, for username and temporary password, respectively"
   type        = string
@@ -167,6 +161,14 @@ variable "lambda_config" {
     user_migration                 = string,
     verify_auth_challenge_response = string,
     kms_key_id                     = string,
+    custom_email_sender = optional(list(object({
+      lambda_arn     = string,
+      lambda_version = string
+    }))),
+    custom_sms_sender = optional(list(object({
+      lambda_arn     = string,
+      lambda_version = string
+    })))
   })
   default = null
 }
