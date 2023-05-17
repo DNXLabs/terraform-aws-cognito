@@ -41,7 +41,7 @@ module "aws_cognito_user_pool_complete_example" {
     pre_token_generation           = "arn:aws:lambda:us-east-1:123456789012:function:pre_token_generation"
     user_migration                 = "arn:aws:lambda:us-east-1:123456789012:function:user_migration"
     verify_auth_challenge_response = "arn:aws:lambda:us-east-1:123456789012:function:verify_auth_challenge_response"
-    kms_key_id                     = aws_kms_key.lambda-custom-sender.arn
+    kms_key_id                     = aws_kms_key.lambda_custom_sender.arn
     custom_email_sender = {
       lambda_arn     = "arn:aws:lambda:us-east-1:123456789012:function:custom_email_sender"
       lambda_version = "V1_0"
@@ -271,8 +271,8 @@ module "aws_cognito_user_pool_complete_example" {
   }
 }
 
-
 # KMS key for lambda custom sender config"
-resource "aws_kms_key" "lambda-custom-sender" {
-  description = "KMS key for lambda custom sender config"
+resource "aws_kms_key" "lambda_custom_sender" {
+  description         = "KMS key for lambda custom sender config"
+  enable_key_rotation = true
 }
