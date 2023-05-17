@@ -22,7 +22,7 @@ resource "aws_cognito_user_pool" "pool" {
       allow_admin_create_user_only = each.value.allow_admin_create_user_only
 
       dynamic "invite_message_template" {
-        for_each = each.value.invite_message_template != null ? each.value.invite_message_template : null
+        for_each = each.value.invite_message_template != null ? each.value.invite_message_template : []
         content {
           email_message = each.value.email_message
           email_subject = each.value.email_subject

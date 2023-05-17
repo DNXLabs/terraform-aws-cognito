@@ -20,11 +20,11 @@ variable "admin_create_user_config" {
   description = "The configuration for AdminCreateUser requests"
   type = object({
     allow_admin_create_user_only = optional(bool, true),
-    invite_message_template = object({
+    invite_message_template = optional(object({
       email_message = string,
       email_subject = string,
       sms_message   = string
-    })
+    }))
   })
   default = null
 }
