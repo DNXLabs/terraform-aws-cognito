@@ -10,16 +10,6 @@ variable "user_pool_name" {
   type        = string
 }
 
-variable "email_verification_message" {
-  description = "A string representing the email verification message"
-  type        = string
-}
-
-variable "email_verification_subject" {
-  description = "A string representing the email verification subject"
-  type        = string
-}
-
 # username_configuration
 variable "username_configuration" {
   description = "The Username Configuration. Seting `case_sesiteve` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs"
@@ -43,7 +33,6 @@ variable "admin_create_user_config_email_message" {
   type        = string
   default     = "{username}, your verification code is `{####}`"
 }
-
 
 variable "admin_create_user_config_email_subject" {
   description = "The subject line for email messages"
@@ -123,6 +112,20 @@ variable "email_configuration" {
     email_sending_account  = string,
     from_email_address     = string
   })
+  default = null
+}
+
+# verification_message_template
+variable "verification_message_template" {
+  description = "The verification message templates configuration"
+  type = list(object({
+    default_email_option  = optional(string),
+    email_message         = optional(string),
+    email_message_by_link = optional(string),
+    email_subject         = optional(string),
+    email_subject_by_link = optional(string),
+    sms_message           = optional(string)
+  }))
   default = null
 }
 
@@ -249,12 +252,6 @@ variable "sms_authentication_message" {
   default     = null
 }
 
-variable "sms_verification_message" {
-  description = "A string representing the SMS verification message"
-  type        = string
-  default     = null
-}
-
 # tags
 variable "tags" {
   description = "A mapping of tags to assign to the User Pool"
@@ -271,31 +268,6 @@ variable "user_pool_add_ons" {
 
 variable "user_pool_add_ons_advanced_security_mode" {
   description = "The mode for advanced security, must be one of `OFF`, `AUDIT` or `ENFORCED`"
-  type        = string
-  default     = null
-}
-
-# verification_message_template
-variable "verification_message_template" {
-  description = "The verification message templates configuration"
-  type        = map(any)
-  default     = {}
-}
-
-variable "verification_message_template_default_email_option" {
-  description = "The default email option. Must be either `CONFIRM_WITH_CODE` or `CONFIRM_WITH_LINK`. Defaults to `CONFIRM_WITH_CODE`"
-  type        = string
-  default     = null
-}
-
-variable "verification_message_template_email_message_by_link" {
-  description = "The email message template for sending a confirmation link to the user, it must contain the `{##Click Here##}` placeholder"
-  type        = string
-  default     = null
-}
-
-variable "verification_message_template_email_subject_by_link" {
-  description = "The subject line for the email message template for sending a confirmation link to the user"
   type        = string
   default     = null
 }

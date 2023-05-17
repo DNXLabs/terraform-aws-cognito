@@ -1,16 +1,12 @@
 resource "aws_cognito_user_pool" "pool" {
   count = var.enabled ? 1 : 0
 
-  alias_attributes           = var.alias_attributes
-  auto_verified_attributes   = var.auto_verified_attributes
-  name                       = var.user_pool_name
-  email_verification_subject = var.email_verification_subject == "" || var.email_verification_subject == null ? var.admin_create_user_config_email_subject : var.email_verification_subject
-  email_verification_message = var.email_verification_message == "" || var.email_verification_message == null ? var.admin_create_user_config_email_message : var.email_verification_message
+  alias_attributes         = var.alias_attributes
+  auto_verified_attributes = var.auto_verified_attributes
+  name                     = var.user_pool_name
   mfa_configuration          = var.mfa_configuration
   sms_authentication_message = var.sms_authentication_message
-  sms_verification_message   = var.sms_verification_message
   username_attributes        = var.username_attributes
-
 
   dynamic "username_configuration" {
     for_each = local.username_configuration
@@ -183,11 +179,14 @@ resource "aws_cognito_user_pool" "pool" {
 
 
   dynamic "verification_message_template" {
-    for_each = local.verification_message_template
+    for_each = var.verification_message_template
     content {
-      default_email_option  = lookup(verification_message_template.value, "default_email_option")
-      email_message_by_link = lookup(verification_message_template.value, "email_message_by_link")
-      email_subject_by_link = lookup(verification_message_template.value, "email_subject_by_link")
+      default_email_option  = each.value.default_email_option
+      email_message         = each.value.email_message
+      email_message_by_link = each.value.email_message_by_link
+      email_subject         = each.value.email_subject
+      email_subject_by_link = each.value.email_subject_by_link
+      sms_message           = each.value.sms_message
     }
   }
 
@@ -269,14 +268,6 @@ locals {
   }
 
   user_pool_add_ons = var.user_pool_add_ons_advanced_security_mode == null && length(var.user_pool_add_ons) == 0 ? [] : [local.user_pool_add_ons_default]
-
-  verification_message_template_default = {
-    default_email_option  = lookup(var.verification_message_template, "default_email_option", null) == null ? var.verification_message_template_default_email_option : lookup(var.verification_message_template, "default_email_option")
-    email_message_by_link = lookup(var.verification_message_template, "email_message_by_link", null) == null ? var.verification_message_template_email_message_by_link : lookup(var.verification_message_template, "email_message_by_link")
-    email_subject_by_link = lookup(var.verification_message_template, "email_subject_by_link", null) == null ? var.verification_message_template_email_subject_by_link : lookup(var.verification_message_template, "email_subject_by_link")
-  }
-
-  verification_message_template = [local.verification_message_template_default]
 
   software_token_mfa_configuration_default = {
     enabled = lookup(var.software_token_mfa_configuration, "enabled", null) == null ? var.software_token_mfa_configuration_enabled : lookup(var.software_token_mfa_configuration, "enabled")
