@@ -44,11 +44,11 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "email_configuration" {
     for_each = var.email_configuration
     content {
-      configuration_set      = each.value.configuration_set
-      reply_to_email_address = each.value.reply_to_email_address
-      source_arn             = each.value.source_arn
-      email_sending_account  = each.value.email_sending_account
-      from_email_address     = each.value.from_email_address
+      configuration_set      = email_configuration.value.configuration_set
+      reply_to_email_address = email_configuration.value.reply_to_email_address
+      source_arn             = email_configuration.value.source_arn
+      email_sending_account  = email_configuration.value.email_sending_account
+      from_email_address     = email_configuration.value.from_email_address
     }
   }
 
@@ -171,12 +171,12 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "verification_message_template" {
     for_each = var.verification_message_template
     content {
-      default_email_option  = each.value.default_email_option
-      email_message         = each.value.email_message
-      email_message_by_link = each.value.email_message_by_link
-      email_subject         = each.value.email_subject
-      email_subject_by_link = each.value.email_subject_by_link
-      sms_message           = each.value.sms_message
+      default_email_option  = verification_message_template.value.default_email_option
+      email_message         = verification_message_template.value.email_message
+      email_message_by_link = verification_message_template.value.email_message_by_link
+      email_subject         = verification_message_template.value.email_subject
+      email_subject_by_link = verification_message_template.value.email_subject_by_link
+      sms_message           = verification_message_template.value.sms_message
     }
   }
 
