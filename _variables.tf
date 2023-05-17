@@ -322,8 +322,18 @@ variable "schemas" {
 
 variable "string_schemas" {
   description = "A container with the string schema attributes of a user pool. Maximum of 50 attributes"
-  type        = list(any)
-  default     = []
+  type = list(object({
+    name                     = string,
+    required                 = bool,
+    mutable                  = bool,
+    developer_only_attribute = bool,
+    attribute_data_type      = optional(string, "string"),
+    string_attribute_constraints = object({
+      min_length = number,
+      max_length = number,
+    })
+  }))
+  default = []
 }
 
 variable "number_schemas" {
