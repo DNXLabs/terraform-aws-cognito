@@ -116,34 +116,14 @@ variable "device_configuration_device_only_remembered_on_user_prompt" {
 # email_configuration
 variable "email_configuration" {
   description = "The Email Configuration"
-  type        = map(any)
-  default     = {}
-}
-
-variable "email_configuration_configuration_set" {
-  description = "The name of the configuration set"
-  type        = string
-}
-
-variable "email_configuration_reply_to_email_address" {
-  description = "The REPLY-TO email address"
-  type        = string
-}
-
-variable "email_configuration_source_arn" {
-  description = "The ARN of the email source"
-  type        = string
-}
-
-variable "email_configuration_email_sending_account" {
-  description = "Instruct Cognito to either use its built-in functional or Amazon SES to send out emails. Allowed values: `COGNITO_DEFAULT` or `DEVELOPER`"
-  type        = string
-  default     = "COGNITO_DEFAULT"
-}
-
-variable "email_configuration_from_email_address" {
-  description = "Sender’s email address or sender’s display name with their email address (e.g. `john@example.com`, `John Smith <john@example.com>` or `\"John Smith Ph.D.\" <john@example.com>)`. Escaped double quotes are required around display names that contain certain characters as specified in RFC 5322"
-  type        = string
+  type = object({
+    configuration_set      = string,
+    reply_to_email_address = string,
+    source_arn             = string,
+    email_sending_account  = string,
+    from_email_address     = string
+  })
+  default = {}
 }
 
 # lambda_config

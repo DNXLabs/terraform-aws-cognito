@@ -47,13 +47,13 @@ resource "aws_cognito_user_pool" "pool" {
 
 
   dynamic "email_configuration" {
-    for_each = local.email_configuration
+    for_each = var.email_configuration
     content {
-      configuration_set      = lookup(email_configuration.value, "configuration_set")
-      reply_to_email_address = lookup(email_configuration.value, "reply_to_email_address")
-      source_arn             = lookup(email_configuration.value, "source_arn")
-      email_sending_account  = lookup(email_configuration.value, "email_sending_account")
-      from_email_address     = lookup(email_configuration.value, "from_email_address")
+      configuration_set      = each.value.configuration_set
+      reply_to_email_address = each.value.reply_to_email_address
+      source_arn             = each.value.source_arn
+      email_sending_account  = each.value.email_sending_account
+      from_email_address     = each.value.from_email_address
     }
   }
 
@@ -241,17 +241,6 @@ locals {
   }
 
   device_configuration = lookup(local.device_configuration_default, "challenge_required_on_new_device") == false && lookup(local.device_configuration_default, "device_only_remembered_on_user_prompt") == false ? [] : [local.device_configuration_default]
-
-
-  email_configuration_default = {
-    configuration_set      = lookup(var.email_configuration, "configuration_set", null) == null ? var.email_configuration_configuration_set : lookup(var.email_configuration, "configuration_set")
-    reply_to_email_address = lookup(var.email_configuration, "reply_to_email_address", null) == null ? var.email_configuration_reply_to_email_address : lookup(var.email_configuration, "reply_to_email_address")
-    source_arn             = lookup(var.email_configuration, "source_arn", null) == null ? var.email_configuration_source_arn : lookup(var.email_configuration, "source_arn")
-    email_sending_account  = lookup(var.email_configuration, "email_sending_account", null) == null ? var.email_configuration_email_sending_account : lookup(var.email_configuration, "email_sending_account")
-    from_email_address     = lookup(var.email_configuration, "from_email_address", null) == null ? var.email_configuration_from_email_address : lookup(var.email_configuration, "from_email_address")
-  }
-
-  email_configuration = [local.email_configuration_default]
 
   password_policy_is_null = {
     minimum_length                   = var.password_policy_minimum_length
