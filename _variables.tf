@@ -13,7 +13,10 @@ variable "user_pool_name" {
 # username_configuration
 variable "username_configuration" {
   description = "The Username Configuration. Seting `case_sesiteve` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs"
-  type        = map(any)
+  type = object({
+    case_sensitive = bool
+  })
+  default = null
 }
 
 variable "admin_create_user_config" {
@@ -89,11 +92,11 @@ variable "device_configuration_device_only_remembered_on_user_prompt" {
 variable "email_configuration" {
   description = "The Email Configuration"
   type = object({
-    configuration_set      = string,
+    configuration_set      = optional(string),
     reply_to_email_address = string,
     source_arn             = string,
     email_sending_account  = string,
-    from_email_address     = string
+    from_email_address     = optional(string)
   })
   default = null
 }
@@ -101,14 +104,14 @@ variable "email_configuration" {
 # verification_message_template
 variable "verification_message_template" {
   description = "The verification message templates configuration"
-  type = list(object({
+  type = object({
     default_email_option  = optional(string),
     email_message         = optional(string),
     email_message_by_link = optional(string),
     email_subject         = optional(string),
     email_subject_by_link = optional(string),
     sms_message           = optional(string)
-  }))
+  })
   default = null
 }
 
@@ -127,14 +130,14 @@ variable "lambda_config" {
     user_migration                 = string,
     verify_auth_challenge_response = string,
     kms_key_id                     = string,
-    custom_email_sender = optional(list(object({
+    custom_email_sender = optional(object({
       lambda_arn     = string,
       lambda_version = string
-    }))),
-    custom_sms_sender = optional(list(object({
+    })),
+    custom_sms_sender = optional(object({
       lambda_arn     = string,
       lambda_version = string
-    })))
+    }))
   })
   default = null
 }
