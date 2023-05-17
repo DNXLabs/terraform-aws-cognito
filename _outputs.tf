@@ -38,12 +38,12 @@ output "domain_cloudfront_distribution_arn" {
 
 output "domain_s3_bucket" {
   description = "The S3 bucket where the static files for this domain are stored"
-  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain.*.s3_bucket) : null
+  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain[*].s3_bucket) : null
 }
 
 output "domain_app_version" {
   description = "The app version"
-  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain.*.version) : null
+  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain[*].version) : null
 }
 
 #
@@ -51,12 +51,12 @@ output "domain_app_version" {
 #
 output "client_ids" {
   description = "The ids of the user pool clients"
-  value       = var.enabled ? aws_cognito_user_pool_client.client.*.id : null
+  value       = var.enabled ? aws_cognito_user_pool_client.client[*].id : null
 }
 
 output "client_secrets" {
   description = " The client secrets of the user pool clients"
-  value       = var.enabled ? aws_cognito_user_pool_client.client.*.client_secret : null
+  value       = var.enabled ? aws_cognito_user_pool_client.client[*].client_secret : null
   sensitive   = true
 }
 
@@ -76,5 +76,5 @@ output "client_secrets_map" {
 #
 output "resource_servers_scope_identifiers" {
   description = " A list of all scopes configured in the format identifier/scope_name"
-  value       = var.enabled ? aws_cognito_resource_server.resource.*.scope_identifiers : null
+  value       = var.enabled ? aws_cognito_resource_server.resource[*].scope_identifiers : null
 }
