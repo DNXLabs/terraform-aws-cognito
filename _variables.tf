@@ -155,8 +155,7 @@ variable "email_configuration_from_email_address" {
 # lambda_config
 variable "lambda_config" {
   description = "A container for the AWS Lambda triggers associated with the user pool"
-  type        = any
-  default = object({
+  type = object({
     create_auth_challenge          = string,
     custom_message                 = string,
     define_auth_challenge          = string,
@@ -169,6 +168,7 @@ variable "lambda_config" {
     verify_auth_challenge_response = string,
     kms_key_id                     = string,
   })
+  default = null
 }
 
 variable "lambda_config_create_auth_challenge" {
