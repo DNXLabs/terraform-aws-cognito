@@ -14,9 +14,12 @@ module "aws_cognito_user_pool_complete_example" {
   }
 
   admin_create_user_config = {
-    email_message = "Dear {username}, your verification code is {####}."
-    email_subject = "Here, your verification code baby"
-    sms_message   = "Your username is {username} and temporary password is {####}."
+    allow_admin_create_user_only = true
+    invite_message_template = {
+      email_message = "Dear {username}, your verification code is {####}."
+      email_subject = "Here, your verification code baby"
+      sms_message   = "Your username is {username} and temporary password is {####}."
+    }
   }
 
   device_configuration = {

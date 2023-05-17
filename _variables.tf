@@ -16,34 +16,17 @@ variable "username_configuration" {
   type        = map(any)
 }
 
-# admin_create_user_config
 variable "admin_create_user_config" {
   description = "The configuration for AdminCreateUser requests"
-  type        = map(any)
-}
-
-variable "admin_create_user_config_allow_admin_create_user_only" {
-  description = "Set to True if only the administrator is allowed to create user profiles. Set to False if users can sign themselves up via an app"
-  type        = bool
-  default     = true
-}
-
-variable "admin_create_user_config_email_message" {
-  description = "The message template for email messages. Must contain `{username}` and `{####}` placeholders, for username and temporary password, respectively"
-  type        = string
-  default     = "{username}, your verification code is `{####}`"
-}
-
-variable "admin_create_user_config_email_subject" {
-  description = "The subject line for email messages"
-  type        = string
-  default     = "Your verification code"
-}
-
-variable "admin_create_user_config_sms_message" {
-  description = "- The message template for SMS messages. Must contain `{username}` and `{####}` placeholders, for username and temporary password, respectively"
-  type        = string
-  default     = "Your username is {username} and temporary password is `{####}`"
+  type        = object({
+    allow_admin_create_user_only = optional(bool, true),
+    invite_message_template = object({
+      email_message = string,
+      email_subject = string,
+      sms_message = string
+    })
+  })
+  default = null
 }
 
 variable "alias_attributes" {

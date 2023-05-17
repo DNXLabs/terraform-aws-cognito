@@ -17,16 +17,16 @@ resource "aws_cognito_user_pool" "pool" {
 
 
   dynamic "admin_create_user_config" {
-    for_each = local.admin_create_user_config
+    for_each = var.admin_create_user_config
     content {
-      allow_admin_create_user_only = lookup(admin_create_user_config.value, "allow_admin_create_user_only")
+      allow_admin_create_user_only = each.value.allow_admin_create_user_only
 
       dynamic "invite_message_template" {
-        for_each = lookup(admin_create_user_config.value, "email_message", null) == null && lookup(admin_create_user_config.value, "email_subject", null) == null && lookup(admin_create_user_config.value, "sms_message", null) == null ? [] : [1]
+        for_each = each.value.invite_message_template != null ? each.value.invite_message_template : null
         content {
-          email_message = lookup(admin_create_user_config.value, "email_message")
-          email_subject = lookup(admin_create_user_config.value, "email_subject")
-          sms_message   = lookup(admin_create_user_config.value, "sms_message")
+          email_message = each.value.email_message
+          email_subject = each.value.email_subject
+          sms_message   = each.value.sms_message
         }
       }
     }
@@ -215,8 +215,6 @@ locals {
     case_sensitive = lookup(var.username_configuration, "case_sensitive", true)
   }
   username_configuration = length(local.username_configuration_default) == 0 ? [] : [local.username_configuration_default]
-
-  admin_create_user_config = [local.admin_create_user_config_default]
 
   sms_configuration_default = {
     external_id    = lookup(var.sms_configuration, "external_id", null) == null ? var.sms_configuration_external_id : lookup(var.sms_configuration, "external_id")
