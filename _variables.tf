@@ -123,7 +123,7 @@ variable "email_configuration" {
     email_sending_account  = string,
     from_email_address     = string
   })
-  default = {}
+  default = null
 }
 
 # lambda_config
