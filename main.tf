@@ -216,15 +216,6 @@ locals {
   }
   username_configuration = length(local.username_configuration_default) == 0 ? [] : [local.username_configuration_default]
 
-
-  admin_create_user_config_default = {
-    allow_admin_create_user_only = lookup(var.admin_create_user_config, "allow_admin_create_user_only", null) == null ? var.admin_create_user_config_allow_admin_create_user_only : lookup(var.admin_create_user_config, "allow_admin_create_user_only")
-    email_message                = lookup(var.admin_create_user_config, "email_message", null) == null ? (var.email_verification_message == "" || var.email_verification_message == null ? var.admin_create_user_config_email_message : var.email_verification_message) : lookup(var.admin_create_user_config, "email_message")
-    email_subject                = lookup(var.admin_create_user_config, "email_subject", null) == null ? (var.email_verification_subject == "" || var.email_verification_subject == null ? var.admin_create_user_config_email_subject : var.email_verification_subject) : lookup(var.admin_create_user_config, "email_subject")
-    sms_message                  = lookup(var.admin_create_user_config, "sms_message", null) == null ? var.admin_create_user_config_sms_message : lookup(var.admin_create_user_config, "sms_message")
-
-  }
-
   admin_create_user_config = [local.admin_create_user_config_default]
 
   sms_configuration_default = {
@@ -259,7 +250,6 @@ locals {
     temporary_password_validity_days = lookup(var.password_policy, "temporary_password_validity_days", null) == null ? var.password_policy_temporary_password_validity_days : lookup(var.password_policy, "temporary_password_validity_days")
 
   }
-
 
   password_policy = var.password_policy == null ? [local.password_policy_is_null] : [local.password_policy_not_null]
 
