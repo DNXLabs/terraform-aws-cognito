@@ -4,9 +4,13 @@ resource "aws_cognito_user_pool" "pool" {
   alias_attributes           = var.alias_attributes
   auto_verified_attributes   = var.auto_verified_attributes
   name                       = var.user_pool_name
-  mfa_configuration          = var.mfa_configuration
   sms_authentication_message = var.sms_authentication_message
   username_attributes        = var.username_attributes
+
+  mfa_configuration = var.mfa_configuration
+  software_token_mfa_configuration {
+    enabled = var.software_token_mfa_configuration.enabled
+  }
 
   dynamic "username_configuration" {
     for_each = local.username_configuration
@@ -56,29 +60,29 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "lambda_config" {
     for_each = var.lambda_config
     content {
-      create_auth_challenge          = lambda_config.each.create_auth_challenge
-      custom_message                 = lambda_config.each.custom_message
-      define_auth_challenge          = lambda_config.each.define_auth_challenge
-      post_authentication            = lambda_config.each.post_authentication
-      post_confirmation              = lambda_config.each.post_confirmation
-      pre_authentication             = lambda_config.each.pre_authentication
-      pre_sign_up                    = lambda_config.each.pre_sign_up
-      pre_token_generation           = lambda_config.each.pre_token_generation
-      user_migration                 = lambda_config.each.user_migration
-      verify_auth_challenge_response = lambda_config.each.verify_auth_challenge_response
-      kms_key_id                     = lambda_config.each.kms_key_id
+      create_auth_challenge          = lambda_config.value.create_auth_challenge
+      custom_message                 = lambda_config.value.custom_message
+      define_auth_challenge          = lambda_config.value.define_auth_challenge
+      post_authentication            = lambda_config.value.post_authentication
+      post_confirmation              = lambda_config.value.post_confirmation
+      pre_authentication             = lambda_config.value.pre_authentication
+      pre_sign_up                    = lambda_config.value.pre_sign_up
+      pre_token_generation           = lambda_config.value.pre_token_generation
+      user_migration                 = lambda_config.value.user_migration
+      verify_auth_challenge_response = lambda_config.value.verify_auth_challenge_response
+      kms_key_id                     = lambda_config.value.kms_key_id
       dynamic "custom_email_sender" {
         for_each = lambda_config.value.custom_email_sender != null ? lambda_config.value.custom_email_sender : []
         content {
-          lambda_arn     = custom_email_sender.each.lambda_arn
-          lambda_version = custom_email_sender.each.lambda_version
+          lambda_arn     = custom_email_sender.value.lambda_arn
+          lambda_version = custom_email_sender.value.lambda_version
         }
       }
       dynamic "custom_sms_sender" {
         for_each = lambda_config.value.custom_sms_sender != null ? lambda_config.value.custom_sms_sender : []
         content {
-          lambda_arn     = custom_email_sender.each.lambda_arn
-          lambda_version = custom_email_sender.each.lambda_version
+          lambda_arn     = custom_email_sender.value.lambda_arn
+          lambda_version = custom_email_sender.value.lambda_version
         }
       }
     }
@@ -86,19 +90,14 @@ resource "aws_cognito_user_pool" "pool" {
 
 
   dynamic "sms_configuration" {
-    for_each = local.sms_configuration
+    for_each = var.sms_configuration
     content {
-      external_id    = lookup(sms_configuration.value, "external_id")
-      sns_caller_arn = lookup(sms_configuration.value, "sns_caller_arn")
+      external_id    = sms_configuration.value.external_id
+      sns_caller_arn = sms_configuration.value.sns_caller_arn
+      sns_region     = sms_configuration.value.sns_region
     }
   }
 
-  dynamic "software_token_mfa_configuration" {
-    for_each = local.software_token_mfa_configuration
-    content {
-      enabled = lookup(software_token_mfa_configuration.value, "enabled")
-    }
-  }
 
   dynamic "password_policy" {
     for_each = local.password_policy
@@ -205,13 +204,6 @@ locals {
   }
   username_configuration = length(local.username_configuration_default) == 0 ? [] : [local.username_configuration_default]
 
-  sms_configuration_default = {
-    external_id    = lookup(var.sms_configuration, "external_id", null) == null ? var.sms_configuration_external_id : lookup(var.sms_configuration, "external_id")
-    sns_caller_arn = lookup(var.sms_configuration, "sns_caller_arn", null) == null ? var.sms_configuration_sns_caller_arn : lookup(var.sms_configuration, "sns_caller_arn")
-  }
-
-  sms_configuration = lookup(local.sms_configuration_default, "external_id") == "" || lookup(local.sms_configuration_default, "sns_caller_arn") == "" ? [] : [local.sms_configuration_default]
-
   device_configuration_default = {
     challenge_required_on_new_device      = lookup(var.device_configuration, "challenge_required_on_new_device", null) == null ? var.device_configuration_challenge_required_on_new_device : lookup(var.device_configuration, "challenge_required_on_new_device")
     device_only_remembered_on_user_prompt = lookup(var.device_configuration, "device_only_remembered_on_user_prompt", null) == null ? var.device_configuration_device_only_remembered_on_user_prompt : lookup(var.device_configuration, "device_only_remembered_on_user_prompt")
@@ -246,10 +238,16 @@ locals {
 
   user_pool_add_ons = var.user_pool_add_ons_advanced_security_mode == null && length(var.user_pool_add_ons) == 0 ? [] : [local.user_pool_add_ons_default]
 
-  software_token_mfa_configuration_default = {
-    enabled = lookup(var.software_token_mfa_configuration, "enabled", null) == null ? var.software_token_mfa_configuration_enabled : lookup(var.software_token_mfa_configuration, "enabled")
-  }
+  # software_token_mfa_configuration_default = {
+  #   enabled = lookup(var.software_token_mfa_configuration, "enabled", null) == null
+  #               ? var.software_token_mfa_configuration_enabled
+  #               : lookup(var.software_token_mfa_configuration, "enabled")
+  # }
 
-  software_token_mfa_configuration = (length(var.sms_configuration) == 0 || local.sms_configuration == null) && var.mfa_configuration == "OFF" ? [] : [local.software_token_mfa_configuration_default]
+  # mfa_configuration = (var.sms_configuration == null || var.software_token_mfa_configuration == null) ?
+  # software_token_mfa_configuration = (length(var.sms_configuration) == 0 || local.sms_configuration == null)
+  #                                   && var.mfa_configuration == "OFF"
+  #                                     ? []
+  #                                     : [local.software_token_mfa_configuration_default]
 
 }

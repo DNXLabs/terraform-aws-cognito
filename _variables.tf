@@ -50,23 +50,14 @@ variable "auto_verified_attributes" {
   default     = []
 }
 
-# sms_configuration
 variable "sms_configuration" {
   description = "The SMS Configuration"
-  type        = map(any)
-  default     = {}
-}
-
-variable "sms_configuration_external_id" {
-  description = "The external ID used in IAM role trust relationships"
-  type        = string
-  default     = ""
-}
-
-variable "sms_configuration_sns_caller_arn" {
-  description = "The ARN of the Amazon SNS caller. This is usually the IAM role that you've given Cognito permission to assume"
-  type        = string
-  default     = ""
+  type = object({
+    external_id    = string,
+    sns_caller_arn = string,
+    sns_region     = optional(string)
+  })
+  default = null
 }
 
 # device_configuration
@@ -143,23 +134,30 @@ variable "lambda_config" {
 }
 
 variable "mfa_configuration" {
-  description = "Set to enable multi-factor authentication. Must be one of the following values (ON, OFF, OPTIONAL)"
+  description = "Set to enable multi-factor authentication."
   type        = string
   default     = "OFF"
+  validation {
+    condition     = contains(["OFF", "ON", "OPTIONAL"], var.mfa_configuration)
+    error_message = "The value must be one of 'OFF', 'ON', 'OPTIONAL'"
+  }
 }
 
-# software_token_mfa_configuration
 variable "software_token_mfa_configuration" {
   description = "Configuration block for software token MFA (multifactor-auth). mfa_configuration must also be enabled for this to work"
-  type        = map(any)
-  default     = {}
+  type = object({
+    enabled = bool
+  })
+  default = {
+    enabled = false
+  }
 }
 
-variable "software_token_mfa_configuration_enabled" {
-  description = "If true, and if mfa_configuration is also enabled, multi-factor authentication by software TOTP generator will be enabled"
-  type        = bool
-  default     = false
-}
+# variable "software_token_mfa_configuration_enabled" {
+#   description = "If true, and if mfa_configuration is also enabled, multi-factor authentication by software TOTP generator will be enabled"
+#   type        = bool
+#   default     = false
+# }
 
 # password_policy
 variable "password_policy" {
