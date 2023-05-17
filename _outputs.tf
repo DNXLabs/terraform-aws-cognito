@@ -28,12 +28,12 @@ output "last_modified_date" {
 #
 output "domain_aws_account_id" {
   description = "The AWS account ID for the user pool owner"
-  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain.*.aws_account_id) : null
+  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain[*].aws_account_id) : null
 }
 
 output "domain_cloudfront_distribution_arn" {
   description = "The ARN of the CloudFront distribution"
-  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain.*.cloudfront_distribution_arn) : null
+  value       = var.enabled ? join("", aws_cognito_user_pool_domain.domain[*].cloudfront_distribution_arn) : null
 }
 
 output "domain_s3_bucket" {
