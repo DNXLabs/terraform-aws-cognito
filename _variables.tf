@@ -132,9 +132,6 @@ variable "email_configuration" {
     source_arn = optional(string)
   })
   default     = {}
-  validation {
-    contains(["COGNITO_DEFAULT", "DEVELOPER"], var.email_configuration.email_sending_account)
-  }
 }
 
 variable "email_configuration_configuration_set" {
