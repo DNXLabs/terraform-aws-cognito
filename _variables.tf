@@ -23,7 +23,9 @@ variable "email_verification_subject" {
 # username_configuration
 variable "username_configuration" {
   description = "The Username Configuration. Seting `case_sesiteve` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs"
-  type        = map(any)
+  type        = object({
+    case_sensitive = bool
+  })
 }
 
 # admin_create_user_config
@@ -122,8 +124,17 @@ variable "device_configuration_device_only_remembered_on_user_prompt" {
 # email_configuration
 variable "email_configuration" {
   description = "The Email Configuration"
-  type        = map(any)
+  type        = object({
+    configuration_set = optional(string),
+    email_sending_account =  optional(string, "COGNITO_DEFAULT"),
+    from_email_address = optional(string),
+    reply_to_email_address = optional(string),
+    source_arn = optional(string)
+  })
   default     = {}
+  validation {
+    contains(["COGNITO_DEFAULT", "DEVELOPER"], var.email_configuration.email_sending_account)
+  }
 }
 
 variable "email_configuration_configuration_set" {
