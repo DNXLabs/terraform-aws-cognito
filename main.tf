@@ -90,7 +90,7 @@ resource "aws_cognito_user_pool" "pool" {
   sms_configuration {
     external_id    = var.sms_configuration.external_id
     sns_caller_arn = var.sms_configuration.sns_caller_arn
-    sns_region     = var.sms_configuration.sns_region
+    # sns_region     = var.sms_configuration.sns_region
   }
 
   dynamic "password_policy" {
