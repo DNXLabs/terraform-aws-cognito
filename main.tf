@@ -19,19 +19,18 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "admin_create_user_config" {
     for_each = var.admin_create_user_config
     content {
-      allow_admin_create_user_only = each.value.allow_admin_create_user_only
+      allow_admin_create_user_only = admin_create_user_config.value.allow_admin_create_user_only
 
       dynamic "invite_message_template" {
-        for_each = each.value.invite_message_template != null ? each.value.invite_message_template : []
+        for_each = admin_create_user_config.value.invite_message_template != null ? admin_create_user_config.value.invite_message_template : []
         content {
-          email_message = each.value.email_message
-          email_subject = each.value.email_subject
-          sms_message   = each.value.sms_message
+          email_message = invite_message_template.value.email_message
+          email_subject = invite_message_template.value.email_subject
+          sms_message   = invite_message_template.value.sms_message
         }
       }
     }
   }
-
 
   dynamic "device_configuration" {
     for_each = local.device_configuration
