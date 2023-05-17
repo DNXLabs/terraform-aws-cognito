@@ -54,31 +54,31 @@ resource "aws_cognito_user_pool" "pool" {
 
 
   dynamic "lambda_config" {
-    for_each = var.lambda_config == null || length(var.lambda_config) == 0 ? [] : [1]
+    for_each = var.lambda_config
     content {
-      create_auth_challenge          = lookup(var.lambda_config, "create_auth_challenge")
-      custom_message                 = lookup(var.lambda_config, "custom_message")
-      define_auth_challenge          = lookup(var.lambda_config, "define_auth_challenge")
-      post_authentication            = lookup(var.lambda_config, "post_authentication")
-      post_confirmation              = lookup(var.lambda_config, "post_confirmation")
-      pre_authentication             = lookup(var.lambda_config, "pre_authentication")
-      pre_sign_up                    = lookup(var.lambda_config, "pre_sign_up")
-      pre_token_generation           = lookup(var.lambda_config, "pre_token_generation")
-      user_migration                 = lookup(var.lambda_config, "user_migration")
-      verify_auth_challenge_response = lookup(var.lambda_config, "verify_auth_challenge_response")
-      kms_key_id                     = lookup(var.lambda_config, "kms_key_id")
+      create_auth_challenge          = lambda_config.each.create_auth_challenge
+      custom_message                 = lambda_config.each.custom_message
+      define_auth_challenge          = lambda_config.each.define_auth_challenge
+      post_authentication            = lambda_config.each.post_authentication
+      post_confirmation              = lambda_config.each.post_confirmation
+      pre_authentication             = lambda_config.each.pre_authentication
+      pre_sign_up                    = lambda_config.each.pre_sign_up
+      pre_token_generation           = lambda_config.each.pre_token_generation
+      user_migration                 = lambda_config.each.user_migration
+      verify_auth_challenge_response = lambda_config.each.verify_auth_challenge_response
+      kms_key_id                     = lambda_config.each.kms_key_id
       dynamic "custom_email_sender" {
-        for_each = lookup(var.lambda_config, "custom_email_sender") == {} ? [] : [1]
+        for_each = lambda_config.value.custom_email_sender != null ? lambda_config.value.custom_email_sender : []
         content {
-          lambda_arn     = lookup(lookup(var.lambda_config, "custom_email_sender"), "lambda_arn", null)
-          lambda_version = lookup(lookup(var.lambda_config, "custom_email_sender"), "lambda_version", null)
+          lambda_arn     = custom_email_sender.each.lambda_arn
+          lambda_version = custom_email_sender.each.lambda_version
         }
       }
       dynamic "custom_sms_sender" {
-        for_each = lookup(var.lambda_config, "custom_sms_sender") == {} ? [] : [1]
+        for_each = lambda_config.value.custom_sms_sender != null ? lambda_config.value.custom_sms_sender : []
         content {
-          lambda_arn     = lookup(lookup(var.lambda_config, "custom_sms_sender"), "lambda_arn", null)
-          lambda_version = lookup(lookup(var.lambda_config, "custom_sms_sender"), "lambda_version", null)
+          lambda_arn     = custom_email_sender.each.lambda_arn
+          lambda_version = custom_email_sender.each.lambda_version
         }
       }
     }
