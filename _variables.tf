@@ -129,7 +129,7 @@ variable "lambda_config" {
       lambda_version = string
     }))
   })
-  default = {}
+  default = null
 }
 
 variable "mfa_configuration" {

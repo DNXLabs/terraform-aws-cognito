@@ -51,34 +51,25 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-  dynamic "lambda_config" {
-    for_each = var.lambda_config
-    content {
-      create_auth_challenge          = lambda_config.value.create_auth_challenge
-      custom_message                 = lambda_config.value.custom_message
-      define_auth_challenge          = lambda_config.value.define_auth_challenge
-      post_authentication            = lambda_config.value.post_authentication
-      post_confirmation              = lambda_config.value.post_confirmation
-      pre_authentication             = lambda_config.value.pre_authentication
-      pre_sign_up                    = lambda_config.value.pre_sign_up
-      pre_token_generation           = lambda_config.value.pre_token_generation
-      user_migration                 = lambda_config.value.user_migration
-      verify_auth_challenge_response = lambda_config.value.verify_auth_challenge_response
-      kms_key_id                     = lambda_config.value.kms_key_id
-      dynamic "custom_email_sender" {
-        for_each = lambda_config.value.custom_email_sender != null ? lambda_config.value.custom_email_sender : []
-        content {
-          lambda_arn     = custom_email_sender.value.lambda_arn
-          lambda_version = custom_email_sender.value.lambda_version
-        }
-      }
-      dynamic "custom_sms_sender" {
-        for_each = lambda_config.value.custom_sms_sender != null ? lambda_config.value.custom_sms_sender : []
-        content {
-          lambda_arn     = custom_email_sender.value.lambda_arn
-          lambda_version = custom_email_sender.value.lambda_version
-        }
-      }
+  lambda_config {
+    create_auth_challenge          = try(var.lambda_config.create_auth_challenge, null)
+    custom_message                 = try(var.lambda_config.custom_message, null)
+    define_auth_challenge          = try(var.lambda_config.define_auth_challenge, null)
+    post_authentication            = try(var.lambda_config.post_authentication, null)
+    post_confirmation              = try(var.lambda_config.post_confirmation, null)
+    pre_authentication             = try(var.lambda_config.pre_authentication, null)
+    pre_sign_up                    = try(var.lambda_config.pre_sign_up, null)
+    pre_token_generation           = try(var.lambda_config.pre_token_generation, null)
+    user_migration                 = try(var.lambda_config.user_migration, null)
+    verify_auth_challenge_response = try(var.lambda_config.verify_auth_challenge_response, null)
+    kms_key_id                     = try(var.lambda_config.kms_key_id, null)
+    custom_email_sender {
+      lambda_arn     = var.lambda_config.custom_email_sender != null ? var.lambda_config.custom_email_sender.value.lambda_arn : null
+      lambda_version = var.lambda_config.custom_email_sender != null ? var.lambda_config.custom_email_sender.value.lambda_version : null
+    }
+    custom_sms_sender {
+      lambda_arn     = var.lambda_config.custom_sms_sender != null ? var.lambda_config.custom_sms_sender.value.lambda_arn : null
+      lambda_version = var.lambda_config.custom_sms_sender != null ? var.lambda_config.custom_sms_sender.value.lambda_version : null
     }
   }
 
