@@ -94,14 +94,12 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-
   dynamic "software_token_mfa_configuration" {
     for_each = local.software_token_mfa_configuration
     content {
       enabled = lookup(software_token_mfa_configuration.value, "enabled")
     }
   }
-
 
   dynamic "password_policy" {
     for_each = local.password_policy
@@ -115,7 +113,6 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-
   dynamic "schema" {
     for_each = var.schemas == null ? [] : var.schemas
     content {
@@ -127,7 +124,6 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-
   dynamic "schema" {
     for_each = var.string_schemas == null ? [] : var.string_schemas
     content {
@@ -136,7 +132,6 @@ resource "aws_cognito_user_pool" "pool" {
       mutable                  = lookup(schema.value, "mutable")
       name                     = lookup(schema.value, "name")
       required                 = lookup(schema.value, "required")
-
 
       dynamic "string_attribute_constraints" {
         for_each = length(lookup(schema.value, "string_attribute_constraints")) == 0 ? [] : [lookup(schema.value, "string_attribute_constraints", {})]
@@ -148,7 +143,6 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-
   dynamic "schema" {
     for_each = var.number_schemas == null ? [] : var.number_schemas
     content {
@@ -157,7 +151,6 @@ resource "aws_cognito_user_pool" "pool" {
       mutable                  = lookup(schema.value, "mutable")
       name                     = lookup(schema.value, "name")
       required                 = lookup(schema.value, "required")
-
 
       dynamic "number_attribute_constraints" {
         for_each = length(lookup(schema.value, "number_attribute_constraints")) == 0 ? [] : [lookup(schema.value, "number_attribute_constraints", {})]
@@ -169,14 +162,12 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-
   dynamic "user_pool_add_ons" {
     for_each = local.user_pool_add_ons
     content {
       advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
     }
   }
-
 
   dynamic "verification_message_template" {
     for_each = var.verification_message_template
@@ -194,7 +185,6 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "account_recovery_setting" {
     for_each = length(var.recovery_mechanisms) == 0 ? [] : [1]
     content {
-
       dynamic "recovery_mechanism" {
         for_each = var.recovery_mechanisms
         content {
