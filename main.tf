@@ -9,14 +9,11 @@ resource "aws_cognito_user_pool" "pool" {
 
   mfa_configuration = var.mfa_configuration
   software_token_mfa_configuration {
-    enabled = var.software_token_mfa_configuration.enabled
+    enabled = try(var.software_token_mfa_configuration.enabled, false)
   }
 
-  dynamic "username_configuration" {
-    for_each = local.username_configuration
-    content {
-      case_sensitive = lookup(username_configuration.value, "case_sensitive")
-    }
+  username_configuration {
+    case_sensitive = try(var.username_configuration.case_sensitive, false)
   }
 
   dynamic "admin_create_user_config" {
@@ -43,7 +40,6 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-
   dynamic "email_configuration" {
     for_each = var.email_configuration
     content {
@@ -54,7 +50,6 @@ resource "aws_cognito_user_pool" "pool" {
       from_email_address     = email_configuration.value.from_email_address
     }
   }
-
 
   dynamic "lambda_config" {
     for_each = var.lambda_config
@@ -161,18 +156,15 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-  dynamic "verification_message_template" {
-    for_each = var.verification_message_template
-    content {
-      default_email_option  = verification_message_template.value.default_email_option
-      email_message         = verification_message_template.value.email_message
-      email_message_by_link = verification_message_template.value.email_message_by_link
-      email_subject         = verification_message_template.value.email_subject
-      email_subject_by_link = verification_message_template.value.email_subject_by_link
-      sms_message           = verification_message_template.value.sms_message
-    }
-  }
+  verification_message_template {
+    default_email_option  = try(var.verification_message_template.default_email_option, null)
+    email_message         = try(var.verification_message_template.email_message, null)
+    email_message_by_link = try(var.verification_message_template.email_message_by_link, null)
+    email_subject         = try(var.verification_message_template.email_subject, null)
+    email_subject_by_link = try(var.verification_message_template.email_subject_by_link, null)
+    sms_message           = try(var.verification_message_template.sms_message, null)
 
+  }
 
   dynamic "account_recovery_setting" {
     for_each = length(var.recovery_mechanisms) == 0 ? [] : [1]
@@ -192,12 +184,6 @@ resource "aws_cognito_user_pool" "pool" {
 }
 
 locals {
-
-  username_configuration_default = length(var.username_configuration) == 0 ? {} : {
-    case_sensitive = lookup(var.username_configuration, "case_sensitive", true)
-  }
-  username_configuration = length(local.username_configuration_default) == 0 ? [] : [local.username_configuration_default]
-
   device_configuration_default = {
     challenge_required_on_new_device      = lookup(var.device_configuration, "challenge_required_on_new_device", null) == null ? var.device_configuration_challenge_required_on_new_device : lookup(var.device_configuration, "challenge_required_on_new_device")
     device_only_remembered_on_user_prompt = lookup(var.device_configuration, "device_only_remembered_on_user_prompt", null) == null ? var.device_configuration_device_only_remembered_on_user_prompt : lookup(var.device_configuration, "device_only_remembered_on_user_prompt")
