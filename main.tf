@@ -87,16 +87,11 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-
-  dynamic "sms_configuration" {
-    for_each = var.sms_configuration
-    content {
-      external_id    = sms_configuration.value.external_id
-      sns_caller_arn = sms_configuration.value.sns_caller_arn
-      sns_region     = sms_configuration.value.sns_region
-    }
+  sms_configuration {
+    external_id    = var.sms_configuration.external_id
+    sns_caller_arn = var.sms_configuration.sns_caller_arn
+    sns_region     = var.sms_configuration.sns_region
   }
-
 
   dynamic "password_policy" {
     for_each = local.password_policy
