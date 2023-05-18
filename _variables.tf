@@ -80,16 +80,16 @@ variable "email_configuration" {
   default = null
 }
 
-# verification_message_template
 variable "verification_message_template" {
   description = "The verification message templates configuration"
   type = object({
-    default_email_option  = optional(string),
-    email_message         = optional(string),
-    email_message_by_link = optional(string),
-    email_subject         = optional(string),
-    email_subject_by_link = optional(string),
-    sms_message           = optional(string)
+    default_email_option  = optional(string, "CONFIRM_WITH_CODE"),
+    default_email_option  = optional(string, null),
+    email_message         = optional(string, null),
+    email_message_by_link = optional(string, null),
+    email_subject         = optional(string, null),
+    email_subject_by_link = optional(string, null),
+    sms_message           = optional(string, null)
   })
   default = null
 }
@@ -245,22 +245,18 @@ variable "tags" {
   default     = {}
 }
 
-# user_pool_add_ons
 variable "user_pool_add_ons" {
   description = "Configuration block for user pool add-ons to enable user pool advanced security mode features"
-  type        = map(any)
-  default     = {}
+  type = object({
+    advanced_security_method = string
+  })
+  default = null
+  validation {
+    condition     = contains(["OFF", "AUDIT", "ENFORCED"], var.user_pool_add_ons)
+    error_message = "The value must be one of 'OFF', 'AUDIT', 'ENFORCED'."
+  }
 }
 
-variable "user_pool_add_ons_advanced_security_mode" {
-  description = "The mode for advanced security, must be one of `OFF`, `AUDIT` or `ENFORCED`"
-  type        = string
-  default     = null
-}
-
-#
-# aws_cognito_user_pool_domain
-#
 variable "domain" {
   description = "Cognito User Pool domain"
   type        = string
@@ -464,10 +460,15 @@ variable "resource_server_scope_description" {
 #
 # Account Recovery Setting
 #
-variable "recovery_mechanisms" {
+variable "account_recovery_setting" {
   description = "The list of Account Recovery Options"
-  type        = list(any)
-  default     = []
+  type = object({
+    recovery_mechanism = list(object({
+      name     = string,
+      priority = number
+    }))
+  })
+  default = null
 }
 
 #

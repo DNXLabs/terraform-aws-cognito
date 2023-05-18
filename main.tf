@@ -141,24 +141,26 @@ resource "aws_cognito_user_pool" "pool" {
   }
 
   dynamic "user_pool_add_ons" {
-    for_each = local.user_pool_add_ons
+    for_each = var.user_pool_add_ons == null ? [] : [1]
     content {
-      advanced_security_mode = lookup(user_pool_add_ons.value, "advanced_security_mode")
+      advanced_security_mode = var.user_pool_add_ons.advanced_security_mode
     }
   }
 
-  verification_message_template {
-    default_email_option  = try(var.verification_message_template.default_email_option, null)
-    email_message         = try(var.verification_message_template.email_message, null)
-    email_message_by_link = try(var.verification_message_template.email_message_by_link, null)
-    email_subject         = try(var.verification_message_template.email_subject, null)
-    email_subject_by_link = try(var.verification_message_template.email_subject_by_link, null)
-    sms_message           = try(var.verification_message_template.sms_message, null)
-
+  dynamic "verification_message_template" {
+    for_each = var.verification_message_template == null ? [] : [1]
+    content {
+      default_email_option  = var.verification_message_template.default_email_option
+      email_message         = var.verification_message_template.email_message
+      email_message_by_link = var.verification_message_template.email_message_by_link
+      email_subject         = var.verification_message_template.email_subject
+      email_subject_by_link = var.verification_message_template.email_subject_by_link
+      sms_message           = var.verification_message_template.sms_message
+    }
   }
 
   dynamic "account_recovery_setting" {
-    for_each = length(var.recovery_mechanisms) == 0 ? [] : [1]
+    for_each = var.account_recovery_setting == 0 ? [] : [1]
     content {
       dynamic "recovery_mechanism" {
         for_each = var.recovery_mechanisms
