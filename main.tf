@@ -37,12 +37,11 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-
   dynamic "device_configuration" {
-    for_each = local.device_configuration
+    for_each = var.device_configuration == null ? [] : [1]
     content {
-      challenge_required_on_new_device      = lookup(device_configuration.value, "challenge_required_on_new_device")
-      device_only_remembered_on_user_prompt = lookup(device_configuration.value, "device_only_remembered_on_user_prompt")
+      challenge_required_on_new_device      = var.device_configuration.challenge_required_on_new_device
+      device_only_remembered_on_user_prompt = var.device_configuration.device_only_remembered_on_user_prompt
     }
   }
 
