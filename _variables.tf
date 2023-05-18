@@ -1,4 +1,3 @@
-
 variable "enabled" {
   description = "Change to false to avoid deploying any resources"
   type        = bool

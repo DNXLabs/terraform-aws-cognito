@@ -16,19 +16,12 @@ resource "aws_cognito_user_pool" "pool" {
     case_sensitive = try(var.username_configuration.case_sensitive, false)
   }
 
-  dynamic "admin_create_user_config" {
-    for_each = var.admin_create_user_config
-    content {
-      allow_admin_create_user_only = admin_create_user_config.value.allow_admin_create_user_only
-
-      dynamic "invite_message_template" {
-        for_each = admin_create_user_config.value.invite_message_template != null ? admin_create_user_config.value.invite_message_template : []
-        content {
-          email_message = invite_message_template.value.email_message
-          email_subject = invite_message_template.value.email_subject
-          sms_message   = invite_message_template.value.sms_message
-        }
-      }
+  admin_create_user_config {
+    allow_admin_create_user_only = try(var.admin_create_user_config.allow_admin_create_user_only, null)
+    invite_message_template {
+      email_message = try(var.admin_create_user_config.invite_message_template.email_message, null)
+      email_subject = try(var.admin_create_user_config.invite_message_template.email_subject, null)
+      sms_message   = try(var.admin_create_user_config.invite_message_template.sms_message, null)
     }
   }
 
@@ -40,15 +33,13 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-  dynamic "email_configuration" {
-    for_each = var.email_configuration
-    content {
-      configuration_set      = email_configuration.value.configuration_set
-      reply_to_email_address = email_configuration.value.reply_to_email_address
-      source_arn             = email_configuration.value.source_arn
-      email_sending_account  = email_configuration.value.email_sending_account
-      from_email_address     = email_configuration.value.from_email_address
-    }
+  email_configuration {
+    configuration_set      = try(var.email_configuration.configuration_set, null)
+    reply_to_email_address = try(var.email_configuration.reply_to_email_address, null)
+    source_arn             = try(var.email_configuration.source_arn, null)
+    email_sending_account  = try(var.email_configuration.email_sending_account, null)
+    from_email_address     = try(var.email_configuration.from_email_address, null)
+
   }
 
   lambda_config {
@@ -64,12 +55,12 @@ resource "aws_cognito_user_pool" "pool" {
     verify_auth_challenge_response = try(var.lambda_config.verify_auth_challenge_response, null)
     kms_key_id                     = try(var.lambda_config.kms_key_id, null)
     custom_email_sender {
-      lambda_arn     = var.lambda_config.custom_email_sender != null ? var.lambda_config.custom_email_sender.value.lambda_arn : null
-      lambda_version = var.lambda_config.custom_email_sender != null ? var.lambda_config.custom_email_sender.value.lambda_version : null
+      lambda_arn     = try(var.lambda_config.custom_email_sender.lambda_arn, null)
+      lambda_version = try(var.lambda_config.custom_email_sender.lambda_version, null)
     }
     custom_sms_sender {
-      lambda_arn     = var.lambda_config.custom_sms_sender != null ? var.lambda_config.custom_sms_sender.value.lambda_arn : null
-      lambda_version = var.lambda_config.custom_sms_sender != null ? var.lambda_config.custom_sms_sender.value.lambda_version : null
+      lambda_arn     = try(var.lambda_config.custom_sms_sender.lambda_arr, null)
+      lambda_version = try(var.lambda_config.custom_sms_sender.lambda_version, null)
     }
   }
 
