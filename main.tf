@@ -94,7 +94,7 @@ resource "aws_cognito_user_pool" "pool" {
   }
 
   dynamic "schema" {
-    for_each = var.schema == null ? [] : var.schemas
+    for_each = var.schemas == null ? [] : var.schemas
     content {
       name                     = schema.value.name
       attribute_data_type      = schema.value.attribute_data_type

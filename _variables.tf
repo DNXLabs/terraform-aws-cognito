@@ -138,13 +138,6 @@ variable "software_token_mfa_configuration" {
   default = null
 }
 
-# variable "software_token_mfa_configuration_enabled" {
-#   description = "If true, and if mfa_configuration is also enabled, multi-factor authentication by software TOTP generator will be enabled"
-#   type        = bool
-#   default     = false
-# }
-
-# password_policy
 variable "password_policy" {
   description = "A container for information about the user pool password policy"
   type = object({
@@ -211,10 +204,9 @@ variable "schemas" {
 variable "string_schemas" {
   description = "A container with the string schema attributes of a user pool. Maximum of 50 attributes"
   type = list(object({
-    attribute_data_type      = string,
+    name                     = string
     developer_only_attribute = optional(bool, true),
     mutable                  = optional(bool, true),
-    name                     = string
     required                 = optional(bool, true)
     string_attribute_constraints = object({
       min_length = number,
@@ -227,10 +219,9 @@ variable "string_schemas" {
 variable "number_schemas" {
   description = "A container with the number schema attributes of a user pool. Maximum of 50 attributes"
   type = list(object({
-    attribute_data_type      = string,
+    name                     = string
     developer_only_attribute = optional(bool, true),
     mutable                  = optional(bool, true),
-    name                     = string
     required                 = optional(bool, true)
     number_attribute_constraints = object({
       min_value = number,
