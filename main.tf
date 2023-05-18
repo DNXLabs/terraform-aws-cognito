@@ -113,7 +113,7 @@ resource "aws_cognito_user_pool" "pool" {
       name                     = schema.value.name
       required                 = schema.value.required
       dynamic "string_attribute_constraints" {
-        for_each = schema.value.string_attribute_constraints != null ? [] : schema.value.string_attribute_constraints
+        for_each = schema.value.string_attribute_constraints != null ? [] : [1]
         content {
           min_length = string_attribute_constraints.value.min_length
           max_length = string_attribute_constraints.value.max_length
@@ -131,7 +131,7 @@ resource "aws_cognito_user_pool" "pool" {
       name                     = schema.value.name
       required                 = schema.value.required
       dynamic "number_attribute_constraints" {
-        for_each = schema.value.number_attribute_constraints != null ? [] : schema.value.number_attribute_constraints
+        for_each = schema.value.number_attribute_constraints != null ? [] : [1]
         content {
           min_value = number_attribute_constraints.value.min_value
           max_value = number_attribute_constraints.value.max_value
