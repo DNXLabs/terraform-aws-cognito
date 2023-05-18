@@ -61,8 +61,8 @@ variable "sms_configuration" {
 variable "device_configuration" {
   description = "The configuration for the user pool's device tracking"
   type = object({
-    challenge_required_on_new_device      = true
-    device_only_remembered_on_user_prompt = true
+    challenge_required_on_new_device      = optional(bool)
+    device_only_remembered_on_user_prompt = optional(bool)
   })
   default = null
 }

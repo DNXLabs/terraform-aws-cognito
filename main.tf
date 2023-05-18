@@ -26,8 +26,8 @@ resource "aws_cognito_user_pool" "pool" {
     for_each = var.admin_create_user_config == null ? [] : [1]
     content {
       allow_admin_create_user_only = var.admin_create_user_config.allow_admin_create_user_only
-      dynamic "invate_message_template" {
-        for_each = var.admin_create_user_config.invite_template == null ? [] : [1]
+      dynamic "invite_message_template" {
+        for_each = var.admin_create_user_config.invite_message_template == null ? [] : [1]
         content {
           email_message = var.admin_create_user_config.invite_message_template.email_message
           email_subject = var.admin_create_user_config.invite_message_template.email_subject
