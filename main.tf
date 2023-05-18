@@ -45,12 +45,15 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-  email_configuration {
-    configuration_set      = try(var.email_configuration.configuration_set, null)
-    reply_to_email_address = try(var.email_configuration.reply_to_email_address, null)
-    source_arn             = try(var.email_configuration.source_arn, null)
-    email_sending_account  = try(var.email_configuration.email_sending_account, null)
-    from_email_address     = try(var.email_configuration.from_email_address, null)
+  dynamic "email_configuration" {
+    for_each = var.email_configuration == null ? [] : [1]
+    content {
+      configuration_set      = var.email_configuration.configuration_set
+      reply_to_email_address = var.email_configuration.reply_to_email_address
+      source_arn             = var.email_configuration.source_arn
+      email_sending_account  = var.email_configuration.email_sending_account
+      from_email_address     = var.email_configuration.from_email_address
+    }
   }
 
   dynamic "lambda_config" {
@@ -79,42 +82,41 @@ resource "aws_cognito_user_pool" "pool" {
   }
 
   dynamic "password_policy" {
-    for_each = local.password_policy
+    for_each = var.password_policy == null ? [] : [1]
     content {
-      minimum_length                   = lookup(password_policy.value, "minimum_length")
-      require_lowercase                = lookup(password_policy.value, "require_lowercase")
-      require_numbers                  = lookup(password_policy.value, "require_numbers")
-      require_symbols                  = lookup(password_policy.value, "require_symbols")
-      require_uppercase                = lookup(password_policy.value, "require_uppercase")
-      temporary_password_validity_days = lookup(password_policy.value, "temporary_password_validity_days")
+      minimum_length                   = var.password_policy.minimum_length
+      require_lowercase                = var.password_policy.require_lowercase
+      require_numbers                  = var.password_policy.require_numbers
+      require_symbols                  = var.password_policy.require_symbols
+      require_uppercase                = var.password_policy.require_uppercase
+      temporary_password_validity_days = var.password_policy.temporary_password_validity_days
     }
   }
 
   dynamic "schema" {
-    for_each = var.schemas == null ? [] : var.schemas
+    for_each = var.schema == null ? [] : var.schemas
     content {
-      attribute_data_type      = lookup(schema.value, "attribute_data_type")
-      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
-      mutable                  = lookup(schema.value, "mutable")
-      name                     = lookup(schema.value, "name")
-      required                 = lookup(schema.value, "required")
+      name                     = schema.value.name
+      attribute_data_type      = schema.value.attribute_data_type
+      required                 = schema.value.required
+      developer_only_attribute = schema.value.developer_only_attribute
+      mutable                  = schema.value.mutable
     }
   }
 
   dynamic "schema" {
     for_each = var.string_schemas == null ? [] : var.string_schemas
     content {
-      attribute_data_type      = lookup(schema.value, "attribute_data_type")
-      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
-      mutable                  = lookup(schema.value, "mutable")
-      name                     = lookup(schema.value, "name")
-      required                 = lookup(schema.value, "required")
-
+      attribute_data_type      = "String"
+      developer_only_attribute = schema.value.developer_only_attribute
+      mutable                  = schema.value.mutable
+      name                     = schema.value.name
+      required                 = schema.value.required
       dynamic "string_attribute_constraints" {
-        for_each = length(lookup(schema.value, "string_attribute_constraints")) == 0 ? [] : [lookup(schema.value, "string_attribute_constraints", {})]
+        for_each = schema.value.string_attribute_constraints != null ? [] : schema.value.string_attribute_constraints
         content {
-          min_length = lookup(string_attribute_constraints.value, "min_length", 0)
-          max_length = lookup(string_attribute_constraints.value, "max_length", 0)
+          min_length = string_attribute_constraints.value.min_length
+          max_length = string_attribute_constraints.value.max_length
         }
       }
     }
@@ -123,17 +125,16 @@ resource "aws_cognito_user_pool" "pool" {
   dynamic "schema" {
     for_each = var.number_schemas == null ? [] : var.number_schemas
     content {
-      attribute_data_type      = lookup(schema.value, "attribute_data_type")
-      developer_only_attribute = lookup(schema.value, "developer_only_attribute")
-      mutable                  = lookup(schema.value, "mutable")
-      name                     = lookup(schema.value, "name")
-      required                 = lookup(schema.value, "required")
-
+      attribute_data_type      = schema.value.attribute_data_type
+      developer_only_attribute = schema.value.developer_only_attribute
+      mutable                  = schema.value.mutable
+      name                     = schema.value.name
+      required                 = schema.value.required
       dynamic "number_attribute_constraints" {
-        for_each = length(lookup(schema.value, "number_attribute_constraints")) == 0 ? [] : [lookup(schema.value, "number_attribute_constraints", {})]
+        for_each = schema.value.number_attribute_constraints != null ? [] : schema.value.number_attribute_constraints
         content {
-          min_value = lookup(number_attribute_constraints.value, "min_value", 0)
-          max_value = lookup(number_attribute_constraints.value, "max_value", 0)
+          min_value = number_attribute_constraints.value.min_value
+          max_value = number_attribute_constraints.value.max_value
         }
       }
     }

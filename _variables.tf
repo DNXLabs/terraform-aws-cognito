@@ -198,20 +198,46 @@ variable "password_policy_temporary_password_validity_days" {
 # schema
 variable "schemas" {
   description = "A container with the schema attributes of a user pool. Maximum of 50 attributes"
-  type        = list(any)
-  default     = []
+  type = list(object({
+    attribute_data_type      = string,
+    developer_only_attribute = optional(bool, true),
+    mutable                  = optional(bool, true),
+    name                     = string
+    required                 = optional(bool, true)
+  }))
+  default = []
 }
 
 variable "string_schemas" {
   description = "A container with the string schema attributes of a user pool. Maximum of 50 attributes"
-  type        = list(any)
-  default     = []
+  type = list(object({
+    attribute_data_type      = string,
+    developer_only_attribute = optional(bool, true),
+    mutable                  = optional(bool, true),
+    name                     = string
+    required                 = optional(bool, true)
+    string_attribute_constraints = object({
+      min_length = number,
+      max_length = number
+    })
+  }))
+  default = []
 }
 
 variable "number_schemas" {
   description = "A container with the number schema attributes of a user pool. Maximum of 50 attributes"
-  type        = list(any)
-  default     = []
+  type = list(object({
+    attribute_data_type      = string,
+    developer_only_attribute = optional(bool, true),
+    mutable                  = optional(bool, true),
+    name                     = string
+    required                 = optional(bool, true)
+    number_attribute_constraints = object({
+      min_value = number,
+      max_value = number
+    })
+  }))
+  default = []
 }
 
 # sms messages
