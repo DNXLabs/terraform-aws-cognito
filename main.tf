@@ -174,13 +174,6 @@ resource "aws_cognito_user_pool" "pool" {
 }
 
 locals {
-  device_configuration_default = {
-    challenge_required_on_new_device      = lookup(var.device_configuration, "challenge_required_on_new_device", null) == null ? var.device_configuration_challenge_required_on_new_device : lookup(var.device_configuration, "challenge_required_on_new_device")
-    device_only_remembered_on_user_prompt = lookup(var.device_configuration, "device_only_remembered_on_user_prompt", null) == null ? var.device_configuration_device_only_remembered_on_user_prompt : lookup(var.device_configuration, "device_only_remembered_on_user_prompt")
-  }
-
-  device_configuration = lookup(local.device_configuration_default, "challenge_required_on_new_device") == false && lookup(local.device_configuration_default, "device_only_remembered_on_user_prompt") == false ? [] : [local.device_configuration_default]
-
   password_policy_is_null = {
     minimum_length                   = var.password_policy_minimum_length
     require_lowercase                = var.password_policy_require_lowercase
