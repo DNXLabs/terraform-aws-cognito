@@ -104,7 +104,6 @@ variable "verification_message_template" {
   default = null
 }
 
-# lambda_config
 variable "lambda_config" {
   description = "A container for the AWS Lambda triggers associated with the user pool"
   type = object({

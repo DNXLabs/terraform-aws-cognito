@@ -42,32 +42,29 @@ resource "aws_cognito_user_pool" "pool" {
 
   }
 
-  lambda_config {
-    create_auth_challenge          = try(var.lambda_config.create_auth_challenge, null)
-    custom_message                 = try(var.lambda_config.custom_message, null)
-    define_auth_challenge          = try(var.lambda_config.define_auth_challenge, null)
-    post_authentication            = try(var.lambda_config.post_authentication, null)
-    post_confirmation              = try(var.lambda_config.post_confirmation, null)
-    pre_authentication             = try(var.lambda_config.pre_authentication, null)
-    pre_sign_up                    = try(var.lambda_config.pre_sign_up, null)
-    pre_token_generation           = try(var.lambda_config.pre_token_generation, null)
-    user_migration                 = try(var.lambda_config.user_migration, null)
-    verify_auth_challenge_response = try(var.lambda_config.verify_auth_challenge_response, null)
-    kms_key_id                     = try(var.lambda_config.kms_key_id, null)
-    custom_email_sender {
-      lambda_arn     = try(var.lambda_config.custom_email_sender.lambda_arn, null)
-      lambda_version = try(var.lambda_config.custom_email_sender.lambda_version, null)
-    }
-    custom_sms_sender {
-      lambda_arn     = try(var.lambda_config.custom_sms_sender.lambda_arr, null)
-      lambda_version = try(var.lambda_config.custom_sms_sender.lambda_version, null)
+  dynamic "lambda_config" {
+    for_each = var.lambda_config == null ? [] : [1]
+    content {
+      create_auth_challenge          = var.lambda_config.create_auth_challenge
+      custom_message                 = var.lambda_config.custom_message
+      define_auth_challenge          = var.lambda_config.define_auth_challenge
+      post_authentication            = var.lambda_config.post_authentication
+      post_confirmation              = var.lambda_config.post_confirmation
+      pre_authentication             = var.lambda_config.pre_authentication
+      pre_sign_up                    = var.lambda_config.pre_sign_up
+      pre_token_generation           = var.lambda_config.pre_token_generation
+      user_migration                 = var.lambda_config.user_migration
+      verify_auth_challenge_response = var.lambda_config.verify_auth_challenge_response
+      kms_key_id                     = var.lambda_config.kms_key_id
     }
   }
 
-  sms_configuration {
-    external_id    = try(var.sms_configuration.external_id, null)
-    sns_caller_arn = try(var.sms_configuration.sns_caller_arn, null)
-    # sns_region     = var.sms_configuration.sns_region
+  dynamic "sms_configuration" {
+    for_each = var.sms_configuration == null ? [] : [1]
+    content {
+      external_id    = var.sms_configuration.external_id
+      sns_caller_arn = var.sms_configuration.sns_caller_arn
+    }
   }
 
   dynamic "password_policy" {
