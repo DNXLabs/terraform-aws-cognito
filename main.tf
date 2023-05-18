@@ -22,14 +22,21 @@ resource "aws_cognito_user_pool" "pool" {
     }
   }
 
-  admin_create_user_config {
-    allow_admin_create_user_only = try(var.admin_create_user_config.allow_admin_create_user_only, null)
-    invite_message_template {
-      email_message = try(var.admin_create_user_config.invite_message_template.email_message, null)
-      email_subject = try(var.admin_create_user_config.invite_message_template.email_subject, null)
-      sms_message   = try(var.admin_create_user_config.invite_message_template.sms_message, null)
+  dynamic "admin_create_user_config" {
+    for_each = var.admin_create_user_config == null ? [] : [1]
+    content {
+      allow_admin_create_user_only = var.admin_create_user_config.allow_admin_create_user_only
+      dynamic "invate_message_template" {
+        for_each = var.admin_create_user_config.invite_template == null ? [] : [1]
+        content {
+          email_message = var.admin_create_user_config.invite_message_template.email_message
+          email_subject = var.admin_create_user_config.invite_message_template.email_subject
+          sms_message   = var.admin_create_user_config.invite_message_template.sms_message
+        }
+      }
     }
   }
+
 
   dynamic "device_configuration" {
     for_each = local.device_configuration
