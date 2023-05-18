@@ -145,9 +145,7 @@ variable "software_token_mfa_configuration" {
   type = object({
     enabled = bool
   })
-  default = {
-    enabled = false
-  }
+  default = null
 }
 
 # variable "software_token_mfa_configuration_enabled" {

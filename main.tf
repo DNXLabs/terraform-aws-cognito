@@ -8,12 +8,18 @@ resource "aws_cognito_user_pool" "pool" {
   username_attributes        = var.username_attributes
 
   mfa_configuration = var.mfa_configuration
-  software_token_mfa_configuration {
-    enabled = try(var.software_token_mfa_configuration.enabled, false)
+  dynamic "software_token_mfa_configuration" {
+    for_each = var.software_token_mfa_configuration == null ? [] : [1]
+    content {
+      enabled = var.software_token_mfa_configuration.enabled
+    }
   }
 
-  username_configuration {
-    case_sensitive = try(var.username_configuration.case_sensitive, false)
+  dynamic "username_configuration" {
+    for_each = var.username_configuration == null ? [] : [1]
+    content {
+      case_sensitive = var.username_configuration.case_sensitive
+    }
   }
 
   admin_create_user_config {
@@ -39,7 +45,6 @@ resource "aws_cognito_user_pool" "pool" {
     source_arn             = try(var.email_configuration.source_arn, null)
     email_sending_account  = try(var.email_configuration.email_sending_account, null)
     from_email_address     = try(var.email_configuration.from_email_address, null)
-
   }
 
   dynamic "lambda_config" {
