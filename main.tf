@@ -163,57 +163,14 @@ resource "aws_cognito_user_pool" "pool" {
     for_each = var.account_recovery_setting == 0 ? [] : [1]
     content {
       dynamic "recovery_mechanism" {
-        for_each = var.recovery_mechanisms
+        for_each = var.account_recovery_setting.recovery_mechanism == null ? [] : var.account_recovery_setting.recovery_mechanism
         content {
-          name     = lookup(recovery_mechanism.value, "name")
-          priority = lookup(recovery_mechanism.value, "priority")
+          name     = recovery_mechanism.value.name
+          priority = recovery_mechanism.value.priority
         }
       }
     }
   }
 
-  # tags
   tags = var.tags
-}
-
-locals {
-  password_policy_is_null = {
-    minimum_length                   = var.password_policy_minimum_length
-    require_lowercase                = var.password_policy_require_lowercase
-    require_numbers                  = var.password_policy_require_numbers
-    require_symbols                  = var.password_policy_require_symbols
-    require_uppercase                = var.password_policy_require_uppercase
-    temporary_password_validity_days = var.password_policy_temporary_password_validity_days
-  }
-
-  password_policy_not_null = var.password_policy == null ? local.password_policy_is_null : {
-    minimum_length                   = lookup(var.password_policy, "minimum_length", null) == null ? var.password_policy_minimum_length : lookup(var.password_policy, "minimum_length")
-    require_lowercase                = lookup(var.password_policy, "require_lowercase", null) == null ? var.password_policy_require_lowercase : lookup(var.password_policy, "require_lowercase")
-    require_numbers                  = lookup(var.password_policy, "require_numbers", null) == null ? var.password_policy_require_numbers : lookup(var.password_policy, "require_numbers")
-    require_symbols                  = lookup(var.password_policy, "require_symbols", null) == null ? var.password_policy_require_symbols : lookup(var.password_policy, "require_symbols")
-    require_uppercase                = lookup(var.password_policy, "require_uppercase", null) == null ? var.password_policy_require_uppercase : lookup(var.password_policy, "require_uppercase")
-    temporary_password_validity_days = lookup(var.password_policy, "temporary_password_validity_days", null) == null ? var.password_policy_temporary_password_validity_days : lookup(var.password_policy, "temporary_password_validity_days")
-
-  }
-
-  password_policy = var.password_policy == null ? [local.password_policy_is_null] : [local.password_policy_not_null]
-
-  user_pool_add_ons_default = {
-    advanced_security_mode = lookup(var.user_pool_add_ons, "advanced_security_mode", null) == null ? var.user_pool_add_ons_advanced_security_mode : lookup(var.user_pool_add_ons, "advanced_security_mode")
-  }
-
-  user_pool_add_ons = var.user_pool_add_ons_advanced_security_mode == null && length(var.user_pool_add_ons) == 0 ? [] : [local.user_pool_add_ons_default]
-
-  # software_token_mfa_configuration_default = {
-  #   enabled = lookup(var.software_token_mfa_configuration, "enabled", null) == null
-  #               ? var.software_token_mfa_configuration_enabled
-  #               : lookup(var.software_token_mfa_configuration, "enabled")
-  # }
-
-  # mfa_configuration = (var.sms_configuration == null || var.software_token_mfa_configuration == null) ?
-  # software_token_mfa_configuration = (length(var.sms_configuration) == 0 || local.sms_configuration == null)
-  #                                   && var.mfa_configuration == "OFF"
-  #                                     ? []
-  #                                     : [local.software_token_mfa_configuration_default]
-
 }

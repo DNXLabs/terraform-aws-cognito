@@ -152,43 +152,6 @@ variable "password_policy" {
   default = null
 }
 
-variable "password_policy_minimum_length" {
-  description = "The minimum length of the password policy that you have set"
-  type        = number
-  default     = 8
-}
-
-variable "password_policy_require_lowercase" {
-  description = "Whether you have required users to use at least one lowercase letter in their password"
-  type        = bool
-  default     = true
-}
-
-variable "password_policy_require_numbers" {
-  description = "Whether you have required users to use at least one number in their password"
-  type        = bool
-  default     = true
-}
-
-variable "password_policy_require_symbols" {
-  description = "Whether you have required users to use at least one symbol in their password"
-  type        = bool
-  default     = true
-}
-
-variable "password_policy_require_uppercase" {
-  description = "Whether you have required users to use at least one uppercase letter in their password"
-  type        = bool
-  default     = true
-}
-
-variable "password_policy_temporary_password_validity_days" {
-  description = "The minimum length of the password policy that you have set"
-  type        = number
-  default     = 7
-}
-
-# schema
 variable "schemas" {
   description = "A container with the schema attributes of a user pool. Maximum of 50 attributes"
   type = list(object({
@@ -251,10 +214,6 @@ variable "user_pool_add_ons" {
     advanced_security_method = string
   })
   default = null
-  validation {
-    condition     = contains(["OFF", "AUDIT", "ENFORCED"], var.user_pool_add_ons)
-    error_message = "The value must be one of 'OFF', 'AUDIT', 'ENFORCED'."
-  }
 }
 
 variable "domain" {
@@ -269,9 +228,6 @@ variable "domain_certificate_arn" {
   default     = null
 }
 
-#
-# aws_cognito_user_pool_client
-#
 variable "clients" {
   description = "A container with the clients definitions"
   type        = any
@@ -424,9 +380,6 @@ variable "user_group_role_arn" {
   default     = null
 }
 
-#
-# aws_cognito_resource_server
-#
 variable "resource_servers" {
   description = "A container with the user_groups definitions"
   type        = list(any)
