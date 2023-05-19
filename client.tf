@@ -11,9 +11,6 @@ resource "aws_cognito_user_pool_client" "client" {
   logout_urls                          = var.clients[count.index].logout_urls
   name                                 = var.clients[count.index].name
   read_attributes                      = var.clients[count.index].read_attributes
-  access_token_validity                = var.clients[count.index].access_token_validity
-  id_token_validity                    = var.clients[count.index].id_token_validity
-  refresh_token_validity               = var.clients[count.index].refresh_token_validity
   supported_identity_providers         = var.clients[count.index].supported_identity_providers
   prevent_user_existence_errors        = var.clients[count.index].prevent_user_existence_errors
   write_attributes                     = var.clients[count.index].write_attributes
