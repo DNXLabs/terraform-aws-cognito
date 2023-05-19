@@ -1,5 +1,4 @@
 module "aws_cognito_user_pool_complete_example" {
-
   source = "../../"
 
   user_pool_name             = "mypool_complete"

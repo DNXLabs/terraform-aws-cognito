@@ -211,7 +211,7 @@ variable "tags" {
 variable "user_pool_add_ons" {
   description = "Configuration block for user pool add-ons to enable user pool advanced security mode features"
   type = object({
-    advanced_security_method = string
+    advanced_security_mode = string
   })
   default = null
 }
