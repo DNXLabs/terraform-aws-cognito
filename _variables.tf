@@ -171,9 +171,12 @@ variable "string_schemas" {
     developer_only_attribute = optional(bool, true),
     mutable                  = optional(bool, true),
     required                 = optional(bool, true)
-    string_attribute_constraints = object({
-      min_length = number,
-      max_length = number
+    string_attribute_constraints = optional(object({
+      min_length = optional(number, 8),
+      max_length = optional(number, 32)
+      }), {
+      min_length = 8,
+      max_length = 32
     })
   }))
   default = []
@@ -186,9 +189,12 @@ variable "number_schemas" {
     developer_only_attribute = optional(bool, true),
     mutable                  = optional(bool, true),
     required                 = optional(bool, true)
-    number_attribute_constraints = object({
-      min_value = number,
-      max_value = number
+    number_attribute_constraints = optional(object({
+      min_value = optional(number, 8),
+      max_value = optional(number, 32)
+      }), {
+      min_value = 8,
+      max_value = 32
     })
   }))
   default = []

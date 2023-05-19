@@ -106,36 +106,32 @@ resource "aws_cognito_user_pool" "pool" {
 
   dynamic "schema" {
     for_each = var.string_schemas == null ? [] : var.string_schemas
+    iterator = string_schema
     content {
       attribute_data_type      = "String"
-      developer_only_attribute = schema.value.developer_only_attribute
-      mutable                  = schema.value.mutable
-      name                     = schema.value.name
-      required                 = schema.value.required
-      dynamic "string_attribute_constraints" {
-        for_each = schema.value.string_attribute_constraints != null ? [] : [1]
-        content {
-          min_length = string_attribute_constraints.value.min_length
-          max_length = string_attribute_constraints.value.max_length
-        }
+      developer_only_attribute = string_schema.value.developer_only_attribute
+      mutable                  = string_schema.value.mutable
+      name                     = string_schema.value.name
+      required                 = string_schema.value.required
+      string_attribute_constraints {
+        min_length = string_schema.value.string_attribute_constraints.min_length
+        max_length = string_schema.value.string_attribute_constraints.max_length
       }
     }
   }
 
   dynamic "schema" {
     for_each = var.number_schemas == null ? [] : var.number_schemas
+    iterator = number_schema
     content {
-      attribute_data_type      = schema.value.attribute_data_type
-      developer_only_attribute = schema.value.developer_only_attribute
-      mutable                  = schema.value.mutable
-      name                     = schema.value.name
-      required                 = schema.value.required
-      dynamic "number_attribute_constraints" {
-        for_each = schema.value.number_attribute_constraints != null ? [] : [1]
-        content {
-          min_value = number_attribute_constraints.value.min_value
-          max_value = number_attribute_constraints.value.max_value
-        }
+      attribute_data_type      = number_schema.value.attribute_data_type
+      developer_only_attribute = number_schema.value.developer_only_attribute
+      mutable                  = number_schema.value.mutable
+      name                     = number_schema.value.name
+      required                 = number_schema.value.required
+      number_attribute_constraints {
+        min_value = number_schema.number_attribute_constraints.min_value
+        max_value = number_schema.number_attribute_constraints.max_value
       }
     }
   }
