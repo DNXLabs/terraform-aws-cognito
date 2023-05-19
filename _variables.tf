@@ -238,7 +238,7 @@ variable "clients" {
     auth_session_validity                         = optional(number, 3)
     callback_urls                                 = optional(list(string)),
     default_redirect_uri                          = optional(string),
-    explicit_auth_flows                           = optional(string),
+    explicit_auth_flows                           = optional(list(string)),
     generate_secret                               = optional(string),
     logout_urls                                   = optional(list(string)),
     read_attributes                               = optional(list(string)),
