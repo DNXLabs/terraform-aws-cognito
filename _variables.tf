@@ -1,4 +1,3 @@
-
 variable "enabled" {
   description = "Change to false to avoid deploying any resources"
   type        = bool
@@ -10,57 +9,25 @@ variable "user_pool_name" {
   type        = string
 }
 
-variable "email_verification_message" {
-  description = "A string representing the email verification message"
-  type        = string
-}
-
-variable "email_verification_subject" {
-  description = "A string representing the email verification subject"
-  type        = string
-}
-
-# username_configuration
 variable "username_configuration" {
   description = "The Username Configuration. Seting `case_sesiteve` specifies whether username case sensitivity will be applied for all users in the user pool through Cognito APIs"
-  type        = map(any)
+  type = object({
+    case_sensitive = bool
+  })
+  default = null
 }
 
-# admin_create_user_config
 variable "admin_create_user_config" {
   description = "The configuration for AdminCreateUser requests"
-  type        = map(any)
-}
-
-variable "admin_create_user_config_allow_admin_create_user_only" {
-  description = "Set to True if only the administrator is allowed to create user profiles. Set to False if users can sign themselves up via an app"
-  type        = bool
-  default     = true
-}
-
-variable "temporary_password_validity_days" {
-  description = "The user account expiration limit, in days, after which the account is no longer usable"
-  type        = number
-  default     = 7
-}
-
-variable "admin_create_user_config_email_message" {
-  description = "The message template for email messages. Must contain `{username}` and `{####}` placeholders, for username and temporary password, respectively"
-  type        = string
-  default     = "{username}, your verification code is `{####}`"
-}
-
-
-variable "admin_create_user_config_email_subject" {
-  description = "The subject line for email messages"
-  type        = string
-  default     = "Your verification code"
-}
-
-variable "admin_create_user_config_sms_message" {
-  description = "- The message template for SMS messages. Must contain `{username}` and `{####}` placeholders, for username and temporary password, respectively"
-  type        = string
-  default     = "Your username is {username} and temporary password is `{####}`"
+  type = object({
+    allow_admin_create_user_only = optional(bool, true),
+    invite_message_template = optional(object({
+      email_message = string,
+      email_subject = string,
+      sms_message   = string
+    }))
+  })
+  default = null
 }
 
 variable "alias_attributes" {
@@ -81,180 +48,96 @@ variable "auto_verified_attributes" {
   default     = []
 }
 
-# sms_configuration
 variable "sms_configuration" {
   description = "The SMS Configuration"
-  type        = map(any)
-  default     = {}
+  type = object({
+    external_id    = string,
+    sns_caller_arn = string,
+    sns_region     = optional(string)
+  })
+  default = null
 }
 
-variable "sms_configuration_external_id" {
-  description = "The external ID used in IAM role trust relationships"
-  type        = string
-  default     = ""
-}
-
-variable "sms_configuration_sns_caller_arn" {
-  description = "The ARN of the Amazon SNS caller. This is usually the IAM role that you've given Cognito permission to assume"
-  type        = string
-  default     = ""
-}
-
-# device_configuration
 variable "device_configuration" {
   description = "The configuration for the user pool's device tracking"
-  type        = map(any)
-  default     = {}
-}
-
-variable "device_configuration_challenge_required_on_new_device" {
-  description = "Indicates whether a challenge is required on a new device. Only applicable to a new device"
-  type        = bool
-  default     = false
-}
-
-variable "device_configuration_device_only_remembered_on_user_prompt" {
-  description = "If true, a device is only remembered on user prompt"
-  type        = bool
-  default     = false
+  type = object({
+    challenge_required_on_new_device      = optional(bool)
+    device_only_remembered_on_user_prompt = optional(bool)
+  })
+  default = null
 }
 
 # email_configuration
 variable "email_configuration" {
   description = "The Email Configuration"
-  type        = map(any)
-  default     = {}
+  type = object({
+    configuration_set      = optional(string),
+    reply_to_email_address = string,
+    source_arn             = string,
+    email_sending_account  = string,
+    from_email_address     = optional(string)
+  })
+  default = null
 }
 
-variable "email_configuration_configuration_set" {
-  description = "The name of the configuration set"
-  type        = string
+variable "verification_message_template" {
+  description = "The verification message templates configuration"
+  type = object({
+    default_email_option  = optional(string, "CONFIRM_WITH_CODE"),
+    default_email_option  = optional(string, null),
+    email_message         = optional(string, null),
+    email_message_by_link = optional(string, null),
+    email_subject         = optional(string, null),
+    email_subject_by_link = optional(string, null),
+    sms_message           = optional(string, null)
+  })
+  default = null
 }
 
-variable "email_configuration_reply_to_email_address" {
-  description = "The REPLY-TO email address"
-  type        = string
-}
-
-variable "email_configuration_source_arn" {
-  description = "The ARN of the email source"
-  type        = string
-}
-
-variable "email_configuration_email_sending_account" {
-  description = "Instruct Cognito to either use its built-in functional or Amazon SES to send out emails. Allowed values: `COGNITO_DEFAULT` or `DEVELOPER`"
-  type        = string
-  default     = "COGNITO_DEFAULT"
-}
-
-variable "email_configuration_from_email_address" {
-  description = "Sender’s email address or sender’s display name with their email address (e.g. `john@example.com`, `John Smith <john@example.com>` or `\"John Smith Ph.D.\" <john@example.com>)`. Escaped double quotes are required around display names that contain certain characters as specified in RFC 5322"
-  type        = string
-}
-
-# lambda_config
 variable "lambda_config" {
   description = "A container for the AWS Lambda triggers associated with the user pool"
-  type        = any
-  default     = {}
-}
-
-variable "lambda_config_create_auth_challenge" {
-  description = "The ARN of the lambda creating an authentication challenge."
-
-}
-
-variable "lambda_config_custom_message" {
-  description = "A custom Message AWS Lambda trigger."
-  type        = string
-
-}
-
-variable "lambda_config_define_auth_challenge" {
-  description = "Defines the authentication challenge."
-  type        = string
-
-}
-
-variable "lambda_config_post_authentication" {
-  description = "A post-authentication AWS Lambda trigger"
-  type        = string
-
-}
-
-variable "lambda_config_post_confirmation" {
-  description = "A post-confirmation AWS Lambda trigger"
-  type        = string
-
-}
-
-variable "lambda_config_pre_authentication" {
-  description = "A pre-authentication AWS Lambda trigger"
-  type        = string
-
-}
-variable "lambda_config_pre_sign_up" {
-  description = "A pre-registration AWS Lambda trigger"
-  type        = string
-
-}
-
-variable "lambda_config_pre_token_generation" {
-  description = "Allow to customize identity token claims before token generation"
-  type        = string
-
-}
-
-variable "lambda_config_user_migration" {
-  description = "The user migration Lambda config type"
-  type        = string
-
-}
-
-variable "lambda_config_verify_auth_challenge_response" {
-  description = "Verifies the authentication challenge response"
-  type        = string
-
-}
-
-variable "lambda_config_kms_key_id" {
-  description = "The Amazon Resource Name of Key Management Service Customer master keys. Amazon Cognito uses the key to encrypt codes and temporary passwords sent to CustomEmailSender and CustomSMSSender."
-  type        = string
-
-}
-
-variable "lambda_config_custom_email_sender" {
-  description = "A custom email sender AWS Lambda trigger."
-  type        = any
-  default     = {}
-}
-
-variable "lambda_config_custom_sms_sender" {
-  description = "A custom SMS sender AWS Lambda trigger."
-  type        = any
-  default     = {}
+  type = object({
+    create_auth_challenge          = string,
+    custom_message                 = string,
+    define_auth_challenge          = string,
+    post_authentication            = string,
+    post_confirmation              = string,
+    pre_authentication             = string,
+    pre_sign_up                    = string,
+    pre_token_generation           = string,
+    user_migration                 = string,
+    verify_auth_challenge_response = string,
+    kms_key_id                     = string,
+    custom_email_sender = optional(object({
+      lambda_arn     = string,
+      lambda_version = string
+    })),
+    custom_sms_sender = optional(object({
+      lambda_arn     = string,
+      lambda_version = string
+    }))
+  })
+  default = null
 }
 
 variable "mfa_configuration" {
-  description = "Set to enable multi-factor authentication. Must be one of the following values (ON, OFF, OPTIONAL)"
+  description = "Set to enable multi-factor authentication."
   type        = string
   default     = "OFF"
+  validation {
+    condition     = contains(["OFF", "ON", "OPTIONAL"], var.mfa_configuration)
+    error_message = "The value must be one of 'OFF', 'ON', 'OPTIONAL'."
+  }
 }
 
-# software_token_mfa_configuration
 variable "software_token_mfa_configuration" {
   description = "Configuration block for software token MFA (multifactor-auth). mfa_configuration must also be enabled for this to work"
-  type        = map(any)
-  default     = {}
+  type = object({
+    enabled = bool
+  })
+  default = null
 }
 
-variable "software_token_mfa_configuration_enabled" {
-  description = "If true, and if mfa_configuration is also enabled, multi-factor authentication by software TOTP generator will be enabled"
-  type        = bool
-  default     = false
-}
-
-# password_policy
 variable "password_policy" {
   description = "A container for information about the user pool password policy"
   type = object({
@@ -269,70 +152,51 @@ variable "password_policy" {
   default = null
 }
 
-variable "password_policy_minimum_length" {
-  description = "The minimum length of the password policy that you have set"
-  type        = number
-  default     = 8
-}
-
-variable "password_policy_require_lowercase" {
-  description = "Whether you have required users to use at least one lowercase letter in their password"
-  type        = bool
-  default     = true
-}
-
-variable "password_policy_require_numbers" {
-  description = "Whether you have required users to use at least one number in their password"
-  type        = bool
-  default     = true
-}
-
-variable "password_policy_require_symbols" {
-  description = "Whether you have required users to use at least one symbol in their password"
-  type        = bool
-  default     = true
-}
-
-variable "password_policy_require_uppercase" {
-  description = "Whether you have required users to use at least one uppercase letter in their password"
-  type        = bool
-  default     = true
-}
-
-variable "password_policy_temporary_password_validity_days" {
-  description = "The minimum length of the password policy that you have set"
-  type        = number
-  default     = 7
-}
-
-# schema
 variable "schemas" {
   description = "A container with the schema attributes of a user pool. Maximum of 50 attributes"
-  type        = list(any)
-  default     = []
+  type = list(object({
+    attribute_data_type      = string,
+    developer_only_attribute = optional(bool, true),
+    mutable                  = optional(bool, true),
+    name                     = string
+    required                 = optional(bool, true)
+  }))
+  default = []
 }
 
 variable "string_schemas" {
   description = "A container with the string schema attributes of a user pool. Maximum of 50 attributes"
-  type        = list(any)
-  default     = []
+  type = list(object({
+    name                     = string
+    developer_only_attribute = optional(bool, true),
+    mutable                  = optional(bool, true),
+    required                 = optional(bool, true)
+    string_attribute_constraints = object({
+      min_length = number,
+      max_length = number
+    })
+  }))
+  default = []
 }
 
 variable "number_schemas" {
   description = "A container with the number schema attributes of a user pool. Maximum of 50 attributes"
-  type        = list(any)
-  default     = []
+  type = list(object({
+    name                     = string
+    developer_only_attribute = optional(bool, true),
+    mutable                  = optional(bool, true),
+    required                 = optional(bool, true)
+    number_attribute_constraints = object({
+      min_value = number,
+      max_value = number
+    })
+  }))
+  default = []
 }
 
 # sms messages
 variable "sms_authentication_message" {
   description = "A string representing the SMS authentication message"
-  type        = string
-  default     = null
-}
-
-variable "sms_verification_message" {
-  description = "A string representing the SMS verification message"
   type        = string
   default     = null
 }
@@ -344,47 +208,14 @@ variable "tags" {
   default     = {}
 }
 
-# user_pool_add_ons
 variable "user_pool_add_ons" {
   description = "Configuration block for user pool add-ons to enable user pool advanced security mode features"
-  type        = map(any)
-  default     = {}
+  type = object({
+    advanced_security_mode = string
+  })
+  default = null
 }
 
-variable "user_pool_add_ons_advanced_security_mode" {
-  description = "The mode for advanced security, must be one of `OFF`, `AUDIT` or `ENFORCED`"
-  type        = string
-  default     = null
-}
-
-# verification_message_template
-variable "verification_message_template" {
-  description = "The verification message templates configuration"
-  type        = map(any)
-  default     = {}
-}
-
-variable "verification_message_template_default_email_option" {
-  description = "The default email option. Must be either `CONFIRM_WITH_CODE` or `CONFIRM_WITH_LINK`. Defaults to `CONFIRM_WITH_CODE`"
-  type        = string
-  default     = null
-}
-
-variable "verification_message_template_email_message_by_link" {
-  description = "The email message template for sending a confirmation link to the user, it must contain the `{##Click Here##}` placeholder"
-  type        = string
-  default     = null
-}
-
-variable "verification_message_template_email_subject_by_link" {
-  description = "The subject line for the email message template for sending a confirmation link to the user"
-  type        = string
-  default     = null
-}
-
-#
-# aws_cognito_user_pool_domain
-#
 variable "domain" {
   description = "Cognito User Pool domain"
   type        = string
@@ -397,9 +228,6 @@ variable "domain_certificate_arn" {
   default     = null
 }
 
-#
-# aws_cognito_user_pool_client
-#
 variable "clients" {
   description = "A container with the clients definitions"
   type        = any
@@ -552,9 +380,6 @@ variable "user_group_role_arn" {
   default     = null
 }
 
-#
-# aws_cognito_resource_server
-#
 variable "resource_servers" {
   description = "A container with the user_groups definitions"
   type        = list(any)
@@ -588,10 +413,15 @@ variable "resource_server_scope_description" {
 #
 # Account Recovery Setting
 #
-variable "recovery_mechanisms" {
+variable "account_recovery_setting" {
   description = "The list of Account Recovery Options"
-  type        = list(any)
-  default     = []
+  type = object({
+    recovery_mechanism = list(object({
+      name     = string,
+      priority = number
+    }))
+  })
+  default = null
 }
 
 #

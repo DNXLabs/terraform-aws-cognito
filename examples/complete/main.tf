@@ -1,22 +1,28 @@
 module "aws_cognito_user_pool_complete_example" {
-
   source = "../../"
 
   user_pool_name             = "mypool_complete"
   alias_attributes           = ["email", "phone_number"]
   auto_verified_attributes   = ["email"]
   sms_authentication_message = "Your username is {username} and temporary password is {####}."
-  sms_verification_message   = "This is the verification message {####}."
 
   mfa_configuration = "OPTIONAL"
-  software_token_mfa_configuration = {
-    enabled = true
+  # software_token_mfa_configuration = {
+  #   enabled = true
+  # }
+
+  sms_configuration = {
+    external_id    = ""
+    sns_caller_arn = ""
   }
 
   admin_create_user_config = {
-    email_message = "Dear {username}, your verification code is {####}."
-    email_subject = "Here, your verification code baby"
-    sms_message   = "Your username is {username} and temporary password is {####}."
+    allow_admin_create_user_only = true
+    invite_message_template = {
+      email_message = "Dear {username}, your verification code is {####}."
+      email_subject = "Here, your verification code baby"
+      sms_message   = "Your username is {username} and temporary password is {####}."
+    }
   }
 
   device_configuration = {
@@ -41,7 +47,7 @@ module "aws_cognito_user_pool_complete_example" {
     pre_token_generation           = "arn:aws:lambda:us-east-1:123456789012:function:pre_token_generation"
     user_migration                 = "arn:aws:lambda:us-east-1:123456789012:function:user_migration"
     verify_auth_challenge_response = "arn:aws:lambda:us-east-1:123456789012:function:verify_auth_challenge_response"
-    kms_key_id                     = aws_kms_key.lambda-custom-sender.arn
+    kms_key_id                     = aws_kms_key.lambda_custom_sender.arn
     custom_email_sender = {
       lambda_arn     = "arn:aws:lambda:us-east-1:123456789012:function:custom_email_sender"
       lambda_version = "V1_0"
@@ -271,8 +277,8 @@ module "aws_cognito_user_pool_complete_example" {
   }
 }
 
-
 # KMS key for lambda custom sender config"
-resource "aws_kms_key" "lambda-custom-sender" {
-  description = "KMS key for lambda custom sender config"
+resource "aws_kms_key" "lambda_custom_sender" {
+  description         = "KMS key for lambda custom sender config"
+  enable_key_rotation = true
 }
