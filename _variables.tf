@@ -67,15 +67,14 @@ variable "device_configuration" {
   default = null
 }
 
-# email_configuration
 variable "email_configuration" {
   description = "The Email Configuration"
   type = object({
-    configuration_set      = optional(string),
-    reply_to_email_address = string,
-    source_arn             = string,
-    email_sending_account  = string,
-    from_email_address     = optional(string)
+    configuration_set      = optional(string, null),
+    reply_to_email_address = optional(string, null),
+    source_arn             = optional(string, null),
+    email_sending_account  = optional(string, null),
+    from_email_address     = optional(string, null)
   })
   default = null
 }
@@ -302,37 +301,17 @@ variable "user_group_role_arn" {
 
 variable "resource_servers" {
   description = "A container with the user_groups definitions"
-  type        = list(any)
-  default     = []
+  type = list(object({
+    identifier = string,
+    name       = string,
+    scopes = optional(list(object({
+      scope_name        = string,
+      scope_description = string
+    })))
+  }))
+  default = []
 }
 
-variable "resource_server_name" {
-  description = "A name for the resource server"
-  type        = string
-  default     = null
-}
-
-variable "resource_server_identifier" {
-  description = "An identifier for the resource server"
-  type        = string
-  default     = null
-}
-
-variable "resource_server_scope_name" {
-  description = "The scope name"
-  type        = string
-  default     = null
-}
-
-variable "resource_server_scope_description" {
-  description = "The scope description"
-  type        = string
-  default     = null
-}
-
-#
-# Account Recovery Setting
-#
 variable "account_recovery_setting" {
   description = "The list of Account Recovery Options"
   type = object({
