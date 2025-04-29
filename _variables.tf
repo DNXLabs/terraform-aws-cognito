@@ -83,7 +83,6 @@ variable "verification_message_template" {
   description = "The verification message templates configuration"
   type = object({
     default_email_option  = optional(string, "CONFIRM_WITH_CODE"),
-    default_email_option  = optional(string, null),
     email_message         = optional(string, null),
     email_message_by_link = optional(string, null),
     email_subject         = optional(string, null),
@@ -141,7 +140,6 @@ variable "password_policy" {
   description = "A container for information about the user pool password policy"
   type = object({
     minimum_length                   = number,
-    require_lowercase                = bool,
     require_lowercase                = bool,
     require_numbers                  = bool,
     require_symbols                  = bool,
