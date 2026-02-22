@@ -16,7 +16,9 @@ This simple example creates a AWS Cognito User Pool with the default values:
 ```
 module "aws_cognito_user_pool_simple" {
 
-  source  = "cognito-user-pool/aws"
+  source  = "git::https://github.com/DNXLabs/terraform-aws-cognito.git"
+  # To use a specific version, replace <version> with the desired release (eg: 2.3.1):
+  # source = "git::https://github.com/DNXLabs/terraform-aws-cognito.git?ref=<version>"
 
   user_pool_name = "mypool"
 
@@ -25,6 +27,7 @@ module "aws_cognito_user_pool_simple" {
     Environment = "production"
     Terraform   = true
   }
+}
 ```
 
 ### Example (conditional creation)
@@ -35,7 +38,9 @@ If you need to create Cognito User Pool resources conditionally in ealierform  v
 # This Cognito User Pool will not be created
 module "aws_cognito_user_pool_conditional_creation" {
 
-  source  = "cognito-user-pool/aws"
+  source  = "git::https://github.com/DNXLabs/terraform-aws-cognito.git"
+  # To use a specific version, replace <version> with the desired release (eg: 2.3.1):
+  # source = "git::https://github.com/DNXLabs/terraform-aws-cognito.git?ref=<version>"
 
   user_pool_name = "conditional_user_pool"
 
@@ -59,7 +64,9 @@ This more complete example creates a AWS Cognito User Pool using a detailed conf
 ```
 module "aws_cognito_user_pool_complete" {
 
-  source  = "cognito-user-pool/aws"
+  source  = "git::https://github.com/DNXLabs/terraform-aws-cognito.git"
+  # To use a specific version, replace <version> with the desired release (eg: 2.3.1):
+  # source = "git::https://github.com/DNXLabs/terraform-aws-cognito.git?ref=<version>"
 
   user_pool_name           = "mypool"
   alias_attributes         = ["email", "phone_number"]
@@ -131,5 +138,5 @@ module "aws_cognito_user_pool_complete" {
     Environment = "production"
     Terraform   = true
   }
-
+}
 `
